@@ -62,33 +62,33 @@
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
   --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
-  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
   --radius: 0.625rem;
-  /* Dark editorial palette as default */
-  --background: oklch(0.16 0.005 60);
-  --foreground: oklch(0.97 0.005 80);
-  --card: oklch(0.19 0.005 60);
-  --card-foreground: oklch(0.97 0.005 80);
-  --popover: oklch(0.19 0.005 60);
-  --popover-foreground: oklch(0.97 0.005 80);
-  --primary: oklch(0.78 0.09 80);
-  --primary-foreground: oklch(0.14 0.005 60);
-  --secondary: oklch(0.24 0.005 60);
-  --secondary-foreground: oklch(0.97 0.005 80);
-  --muted: oklch(0.24 0.005 60);
-  --muted-foreground: oklch(0.72 0.01 80);
-  --accent: oklch(0.78 0.09 80);
-  --accent-foreground: oklch(0.14 0.005 60);
+  /* Light warm palette */
+  --background: oklch(0.985 0.004 80);   /* #f9f8f6 warm off-white */
+  --foreground: oklch(0.20 0.005 60);    /* #1a1a1a near black */
+  --card: oklch(1 0 0);                  /* #ffffff */
+  --card-foreground: oklch(0.20 0.005 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.20 0.005 60);
+  --primary: oklch(0.62 0.12 75);        /* dark gold #b8860b */
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.95 0.006 80);     /* #f4f2ee */
+  --secondary-foreground: oklch(0.20 0.005 60);
+  --muted: oklch(0.95 0.006 80);
+  --muted-foreground: oklch(0.45 0.008 70);
+  --accent: oklch(0.62 0.12 75);
+  --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.28 0.005 60);
-  --input: oklch(0.28 0.005 60);
-  --ring: oklch(0.78 0.09 80);
-  --gold: oklch(0.78 0.09 80);
-  --gold-foreground: oklch(0.14 0.005 60);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.90 0.008 75);        /* warm light gray */
+  --input: oklch(0.90 0.008 75);
+  --ring: oklch(0.62 0.12 75);
+  --gold: oklch(0.62 0.12 75);
+  --gold-foreground: oklch(1 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -156,8 +156,8 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-serif);
-    font-weight: 400;
+    font-family: var(--font-sans);
+    font-weight: 600;
     letter-spacing: -0.01em;
   }
 }

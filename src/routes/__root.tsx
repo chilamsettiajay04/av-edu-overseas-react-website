@@ -78,13 +78,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "RAD Architecture INC" },
-      { name: "description", content: "Boutique architectural design firm specializing in hospitality, luxury resorts, and residential projects." },
-      { name: "author", content: "RAD Architecture" },
-      { property: "og:title", content: "RAD Architecture INC" },
-      { property: "og:description", content: "Boutique architectural design firm specializing in hospitality, luxury resorts, and residential projects." },
+      { name: "description", content: "RAD Overseas Consultancy — Your gateway to global education and immigration opportunities." },
+      { name: "author", content: "RAD Overseas Consultancy" },
+      { property: "og:title", content: "RAD Overseas Consultancy" },
+      { property: "og:description", content: "Your gateway to global education and immigration opportunities." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@RADArchitecture" },
+      { name: "twitter:site", content: "@RADOverseas" },
     ],
     links: [
       {
@@ -95,7 +95,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600;700;800&display=swap",
       },
     ],
   }),
