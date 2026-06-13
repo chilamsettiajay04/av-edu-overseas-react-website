@@ -1,8 +1,10 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { JSX, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Phone, Mail, Menu, X, MapPin, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { useSiteSettings } from "@/lib/SiteSettingsContext";
+import { Office } from "@/sanity/queries";
 
 const NAV: { label: string; to: string }[] = [
   { label: "Home", to: "/" },
@@ -26,21 +28,22 @@ export function SiteLayout({ children }: { children: ReactNode }) {
 }
 
 function TopBar() {
+  const s = useSiteSettings();
   return (
     <div className="hidden h-10 border-b border-primary/20 bg-primary text-xs text-primary-foreground md:block">
       <div className="mx-auto flex h-full max-w-full px-10 md:px-16 items-center justify-between">
         <div className="flex items-center gap-6">
           <a
-            href="tel:+13056434771"
+            href={`tel:${s?.primaryPhone?.replace(/\s/g, "") || "+13056434771"}`}
             className="flex items-center gap-2 transition-colors hover:text-white/80"
           >
-            <Phone className="h-3.5 w-3.5" /> +1.305.643.4771
+            <Phone className="h-3.5 w-3.5" /> {s?.primaryPhone || "+1.305.643.4771"}
           </a>
           <a
-            href="mailto:info@radoverseas.com"
+            href={`mailto:${s?.primaryEmail || "info@radoverseas.com"}`}
             className="flex items-center gap-2 transition-colors hover:text-white/80"
           >
-            <Mail className="h-3.5 w-3.5" /> info@radoverseas.com
+            <Mail className="h-3.5 w-3.5" /> {s?.primaryEmail || "info@radoverseas.com"}
           </a>
         </div>
         <SocialIcons size={14} />
@@ -150,6 +153,13 @@ function InstagramIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
+const SOCIAL_ICON_MAP: Record<string, (props: React.SVGProps<SVGSVGElement>) => JSX.Element> = {
+  twitter: TwitterIcon,
+  facebook: FacebookIcon,
+  linkedin: LinkedInIcon,
+  instagram: InstagramIcon,
+};
+
 export function SocialIcons({
   size = 16,
   tone = "muted",
@@ -157,26 +167,53 @@ export function SocialIcons({
   size?: number;
   tone?: "muted" | "light";
 }) {
+  const s = useSiteSettings();
   const base =
     tone === "light" ? "text-white/70 hover:text-primary" : "text-foreground/60 hover:text-primary";
-  const icons = [
-    { Icon: TwitterIcon, label: "Twitter" },
-    { Icon: FacebookIcon, label: "Facebook" },
-    { Icon: LinkedInIcon, label: "LinkedIn" },
-    { Icon: InstagramIcon, label: "Instagram" },
-  ];
+  const links = s?.socialLinks || [];
+
+  if (links.length === 0) {
+    const defaults = [
+      { platform: "twitter", url: "#", label: "Twitter" },
+      { platform: "facebook", url: "#", label: "Facebook" },
+      { platform: "linkedin", url: "#", label: "LinkedIn" },
+      { platform: "instagram", url: "#", label: "Instagram" },
+    ];
+    return (
+      <div className="flex items-center gap-4">
+        {defaults.map(({ platform, url, label }) => {
+          const Icon = SOCIAL_ICON_MAP[platform];
+          if (!Icon) return null;
+          return (
+            <a key={platform} href={url} aria-label={label} className={`transition-colors ${base}`}>
+              <Icon style={{ width: size, height: size }} />
+            </a>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center gap-4">
-      {icons.map(({ Icon, label }) => (
-        <a key={label} href="#" aria-label={label} className={`transition-colors ${base}`}>
-          <Icon style={{ width: size, height: size }} />
-        </a>
-      ))}
+      {links.map((link) => {
+        const Icon = SOCIAL_ICON_MAP[link.platform];
+        if (!Icon) return null;
+        return (
+          <a
+            key={link.platform}
+            href={link.url}
+            aria-label={link.platform}
+            className={`transition-colors ${base}`}
+          >
+            <Icon style={{ width: size, height: size }} />
+          </a>
+        );
+      })}
     </div>
   );
 }
 
-// FIXED: MainNav now uses useLocation to properly detect homepage
 function MainNav() {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
@@ -187,7 +224,7 @@ function MainNav() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    onScroll(); // set initial value after mount
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -198,7 +235,7 @@ function MainNav() {
         isHome ? "fixed" : "sticky"
       } top-0 z-50 w-full h-16 transition-[color,box-shadow] duration-500 ${
         transparent
-          ? "bg-transparent top-0 md:top-14"
+          ? "bg-transparent top-6 md:top-14"
           : scrolled
             ? "bg-white/95 shadow-sm backdrop-blur-md"
             : "bg-white/90 backdrop-blur-sm"
@@ -250,14 +287,18 @@ function MainNav() {
 }
 
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
-  const logoSrc = tone === "light" ? "/logo-light.png" : "/logo.png";
+  const s = useSiteSettings();
+  const logoSrc =
+    tone === "light" ? s?.companyLogoLight || "/logo-light.png" : s?.companyLogoDark || "/logo.png";
+  const name = s?.companyName || "Av Edu Overseas Consultancy";
+  const tagline = s?.logoTagline || "Overseas Consultancy";
   return (
     <Link to="/" className="flex flex-col leading-none items-start">
-      <img src={logoSrc} alt="Av Edu" className="h-5 w-auto object-contain" />
+      <img src={logoSrc} alt={name} className="h-5 w-auto object-contain" />
       <span
         className={`mt-1 text-[9px] uppercase tracking-[0.4em] ${tone === "light" ? "text-white/60" : "text-primary"}`}
       >
-        Overseas Consultancy
+        {tagline}
       </span>
     </Link>
   );
@@ -296,6 +337,21 @@ export function Reveal({ children, className = "" }: { children: ReactNode; clas
 }
 
 function Footer() {
+  const s = useSiteSettings();
+  const name = s?.companyName || "Av Edu Overseas Consultancy";
+  const offices = s?.offices || [];
+  const fallbackOffices: Office[] = [
+    {
+      officeTitle: "India Office",
+      isMainBranch: true,
+      officeAddress: "Banjara Hills, Hyderabad, Telangana, India 500034",
+      officePhone: "+91 98765 43210",
+      officeEmail: "india@radoverseas.com",
+      officeHours: ["Monday–Friday 10:00am–7:00pm (IST)", "Sat–Sun Closed"],
+    },
+  ];
+  const mainBranch = offices.find((o) => o.isMainBranch) || offices[0] || fallbackOffices[0];
+
   return (
     <footer className="bg-black text-white">
       <div className="pi-section pb-14">
@@ -303,14 +359,14 @@ function Footer() {
           <div>
             <Logo tone="light" />
             <p className="mt-4 text-sm leading-relaxed text-white/70">
-              A trusted boutique consultancy guiding students and professionals through overseas
-              education and immigration journeys since 2012.
+              {s?.footerDescription ||
+                "A trusted boutique consultancy guiding students and professionals through overseas education and immigration journeys since 2012."}
             </p>
             <div className="mt-6">
               <SocialIcons size={16} tone="light" />
             </div>
             <p className="mt-6 text-[11px] tracking-[0.2em] text-white/60">
-              © 2024. Av Edu. All rights reserved.
+              {s?.copyrightText || `© 2024. ${name}. All rights reserved.`}
             </p>
             <p className="mt-2 text-[11px] tracking-[0.2em] text-white/60">
               <a href="/privacy-policy" className="hover:text-white transition-colors">
@@ -323,11 +379,12 @@ function Footer() {
             </p>
           </div>
           <OfficeBlock
-            title="India Office"
-            address="Banjara Hills, Hyderabad, Telangana, India 500034"
-            phone="+91 98765 43210"
-            email="india@radoverseas.com"
-            hours={["Monday–Friday 10:00am–7:00pm (IST)", "Sat–Sun Closed"]}
+            key={mainBranch.officeTitle}
+            title={mainBranch.officeTitle}
+            address={mainBranch.officeAddress}
+            phone={mainBranch.officePhone}
+            email={mainBranch.officeEmail}
+            hours={mainBranch.officeHours || []}
           />
           <ContactForm />
         </div>
@@ -345,8 +402,8 @@ function OfficeBlock({
 }: {
   title: string;
   address: string;
-  phone: string;
-  email: string;
+  phone?: string;
+  email?: string;
   hours: string[];
 }) {
   return (
@@ -358,28 +415,34 @@ function OfficeBlock({
           <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/60" />
           <span>{address}</span>
         </li>
-        <li className="flex gap-3">
-          <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/60" />
-          <a href={`tel:${phone.replace(/\s/g, "")}`} className="hover:text-white/80">
-            {phone}
-          </a>
-        </li>
-        <li className="flex gap-3">
-          <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/60" />
-          <a href={`mailto:${email}`} className="hover:text-white/80">
-            {email}
-          </a>
-        </li>
-        <li className="flex gap-3">
-          <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/60" />
-          <span>
-            {hours.map((h) => (
-              <span key={h} className="block">
-                {h}
-              </span>
-            ))}
-          </span>
-        </li>
+        {phone && (
+          <li className="flex gap-3">
+            <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/60" />
+            <a href={`tel:${phone.replace(/\s/g, "")}`} className="hover:text-white/80">
+              {phone}
+            </a>
+          </li>
+        )}
+        {email && (
+          <li className="flex gap-3">
+            <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/60" />
+            <a href={`mailto:${email}`} className="hover:text-white/80">
+              {email}
+            </a>
+          </li>
+        )}
+        {hours.length > 0 && (
+          <li className="flex gap-3">
+            <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/60" />
+            <span>
+              {hours.map((h) => (
+                <span key={h} className="block">
+                  {h}
+                </span>
+              ))}
+            </span>
+          </li>
+        )}
       </ul>
     </div>
   );
@@ -442,14 +505,17 @@ export function PageHero({
 }: {
   title: string;
   subtitle?: string;
-  image: string;
+  image?: string;
 }) {
+  const s = useSiteSettings();
   return (
     <section className="relative h-[44vh] min-h-[320px] w-full overflow-hidden bg-black">
-      <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      {image && <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover" />}
       <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/60 to-black/80" />
       <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-6 text-center">
-        <p className="text-[10px] uppercase tracking-[0.45em] text-white/60">Av Edu</p>
+        <p className="text-[10px] uppercase tracking-[0.45em] text-white/60">
+          {s?.companyName || "Av Edu Overseas Consultancy"}
+        </p>
         <h1 className="mt-4 font-serif text-4xl font-light text-white sm:text-5xl md:text-6xl">
           {title}
         </h1>
