@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, useLoaderData } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import {
   GraduationCap,
@@ -33,7 +33,6 @@ import {
   type HeroSection,
   type MainCta,
 } from "@/sanity/queries";
-import { faqSchema, webpageSchema, jsonLdScript } from "@/lib/seo";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   GraduationCap,
@@ -65,65 +64,26 @@ const STYLES = [
   { accent: "from-teal-600/20 to-teal-600/5", iconBg: "bg-teal-50", iconColor: "text-teal-600" },
 ];
 
-export const Route = createFileRoute("/")({
-  loader: async () => {
-    const [services, destinations, faqs, stats, siteSettings, heroSections, mainCta] =
-      await Promise.all([
-        getServices(),
-        getDestinations(),
-        getFaqs(),
-        getStats(),
-        getSiteSettingsShared(),
-        getHeroSections(),
-        getMainCta(),
-      ]);
-    const homeHero = heroSections.find((h) => h.page === "home");
-    return {
-      featuredServices: services.slice(0, 3),
-      featuredDestinations: destinations.slice(0, 6),
-      faqs: faqs.slice(0, 5),
-      stats,
-      siteSettings,
-      heroSlides: homeHero?.slides || [],
-      mainCta,
-    };
-  },
-  head: ({ loaderData }) => {
-    const data = loaderData as {
-      siteSettings: SiteSettings | null;
+export default function HomePage() {
+  const { featuredServices, featuredDestinations, faqs, stats, heroSlides, mainCta, siteSettings } =
+    useLoaderData() as {
+      featuredServices: ServiceData[];
+      featuredDestinations: DestinationListItem[];
       faqs: FaqData[];
+      stats: StatData[];
+      siteSettings: SiteSettings | null;
+      heroSlides: { image: string; heading?: string; subtitle?: string }[];
+      mainCta: MainCta | null;
     };
-    const s = data?.siteSettings;
-    const name = s?.companyName || "Av Edu Overseas Consultancy";
-    const seoTitle = s?.seoTitle || `${name} — Your Gateway to Global Opportunities`;
-    const seoDesc =
-      s?.seoDescription ||
-      `${name} guides students and professionals through study abroad, visa, and immigration journeys across 25+ countries.`;
-    const siteUrl = "https://rad-architecture-showcase.vercel.app";
-    const schemas = [
-      webpageSchema(seoTitle, seoDesc, siteUrl),
-      ...(data?.faqs?.length ? [faqSchema(data.faqs)] : []),
-    ];
-    return {
-      meta: [
-        { title: seoTitle },
-        { name: "description", content: seoDesc },
-        { property: "og:title", content: seoTitle },
-        { property: "og:description", content: seoDesc },
-        { property: "og:url", content: siteUrl },
-        { name: "twitter:title", content: seoTitle },
-        { name: "twitter:description", content: seoDesc },
-      ],
-      links: [{ rel: "canonical", href: siteUrl }],
-      scripts: schemas.map(jsonLdScript),
-    };
-  },
-  component: Index,
-});
 
-function Index() {
-  const { featuredServices, featuredDestinations, faqs, stats, heroSlides, mainCta } =
-    Route.useLoaderData();
+  const s = siteSettings;
+  const name = s?.companyName || "Av Edu Overseas Consultancy";
+  const seoTitle = s?.seoTitle || `${name} — Your Gateway to Global Opportunities`;
+
+  useEffect(() => {
+    document.title = seoTitle;
+  }, [seoTitle]);
+
   return (
     <SiteLayout>
       <Hero slides={heroSlides} />
@@ -136,6 +96,31 @@ function Index() {
     </SiteLayout>
   );
 }
+
+async function loader() {
+  const [services, destinations, faqs, stats, siteSettings, heroSections, mainCta] =
+    await Promise.all([
+      getServices(),
+      getDestinations(),
+      getFaqs(),
+      getStats(),
+      getSiteSettingsShared(),
+      getHeroSections(),
+      getMainCta(),
+    ]);
+  const homeHero = heroSections.find((h) => h.page === "home");
+  return {
+    featuredServices: services.slice(0, 3),
+    featuredDestinations: destinations.slice(0, 6),
+    faqs: faqs.slice(0, 5),
+    stats,
+    siteSettings,
+    heroSlides: homeHero?.slides || [],
+    mainCta,
+  };
+}
+
+HomePage.loader = loader;
 
 function Hero({ slides }: { slides: { image: string; heading?: string; subtitle?: string }[] }) {
   const s = useSiteSettings();
@@ -327,8 +312,7 @@ export function DestinationCard({
   return (
     <Reveal>
       <Link
-        to="/destinations/$slug"
-        params={{ slug: d.slug }}
+        to={`/destinations/${d.slug}`}
         className="group relative block overflow-hidden bg-card shadow-sm transition-shadow hover:shadow-xl"
         style={{ transitionDelay: `${index * 50}ms` }}
       >

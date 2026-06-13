@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useLoaderData } from "react-router-dom";
+import { useEffect } from "react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
 import { useSiteSettings } from "@/lib/SiteSettingsContext";
 import {
@@ -7,55 +8,20 @@ import {
   type SiteSettings,
   type HeroSection,
 } from "@/sanity/queries";
-import { breadcrumbSchema, webpageSchema, jsonLdScript } from "@/lib/seo";
 
-export const Route = createFileRoute("/about")({
-  loader: async () => {
-    const [siteSettings, heroSections] = await Promise.all([
-      getSiteSettingsShared(),
-      getHeroSections(),
-    ]);
-    const hero = heroSections.find((h) => h.page === "about");
-    return { siteSettings, hero };
-  },
-  head: ({ loaderData }) => {
-    const { siteSettings } = loaderData as { siteSettings: SiteSettings | null };
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    const title = `About Us — ${name}`;
-    const desc = `Learn about ${name} — our story, mission, and commitment to guiding students worldwide.`;
-    const siteUrl = "https://rad-architecture-showcase.vercel.app/about";
-    const schemas = [
-      webpageSchema(title, desc, siteUrl),
-      breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app" },
-        { name: "About Us", url: siteUrl },
-      ]),
-    ];
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:url", content: siteUrl },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: desc },
-      ],
-      links: [{ rel: "canonical", href: siteUrl }],
-      scripts: schemas.map(jsonLdScript),
-    };
-  },
-  component: About,
-});
-
-function About() {
-  const { hero } = Route.useLoaderData() as {
+export default function AboutPage() {
+  const { hero, siteSettings } = useLoaderData() as {
     hero: HeroSection | undefined;
     siteSettings: SiteSettings | null;
   };
   const s = useSiteSettings();
   const aboutParagraphs = [s?.aboutDescription, s?.aboutDescription2].filter(Boolean) as string[];
   const slide = hero?.slides?.[0];
+
+  useEffect(() => {
+    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+    document.title = `About Us — ${name}`;
+  }, [siteSettings]);
 
   return (
     <SiteLayout>
@@ -121,3 +87,14 @@ function About() {
     </SiteLayout>
   );
 }
+
+async function loader() {
+  const [siteSettings, heroSections] = await Promise.all([
+    getSiteSettingsShared(),
+    getHeroSections(),
+  ]);
+  const hero = heroSections.find((h) => h.page === "about");
+  return { siteSettings, hero };
+}
+
+AboutPage.loader = loader;

@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useLoaderData } from "react-router-dom";
+import { useEffect } from "react";
 import {
   GraduationCap,
   FileCheck,
@@ -17,7 +18,6 @@ import {
   type SiteSettings,
   type HeroSection,
 } from "@/sanity/queries";
-import { breadcrumbSchema, webpageSchema, jsonLdScript } from "@/lib/seo";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   GraduationCap,
@@ -49,56 +49,18 @@ const STYLES = [
   { accent: "from-teal-600/20 to-teal-600/5", iconBg: "bg-teal-50", iconColor: "text-teal-600" },
 ];
 
-export const Route = createFileRoute("/services")({
-  loader: async () => {
-    const [services, siteSettings, heroSections] = await Promise.all([
-      getServices(),
-      getSiteSettingsShared(),
-      getHeroSections(),
-    ]);
-    const hero = heroSections.find((h) => h.page === "services");
-    return { services, siteSettings, hero };
-  },
-  head: ({ loaderData }) => {
-    const { siteSettings } = loaderData as {
-      services: ServiceData[];
-      siteSettings: SiteSettings | null;
-    };
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    const title = `Our Services — ${name}`;
-    const desc = `End-to-end overseas education and immigration services — admissions, visa, immigration, career counseling and more by ${name}.`;
-    const siteUrl = "https://rad-architecture-showcase.vercel.app/services";
-    const schemas = [
-      webpageSchema(title, desc, siteUrl),
-      breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app" },
-        { name: "Services", url: siteUrl },
-      ]),
-    ];
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:url", content: siteUrl },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: desc },
-      ],
-      links: [{ rel: "canonical", href: siteUrl }],
-      scripts: schemas.map(jsonLdScript),
-    };
-  },
-  component: Services,
-});
-
-function Services() {
-  const { services, hero } = Route.useLoaderData() as {
+export default function ServicesPage() {
+  const { services, hero, siteSettings } = useLoaderData() as {
     services: ServiceData[];
     siteSettings: SiteSettings | null;
     hero: HeroSection | undefined;
   };
   const slide = hero?.slides?.[0];
+
+  useEffect(() => {
+    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+    document.title = `Our Services — ${name}`;
+  }, [siteSettings]);
 
   return (
     <SiteLayout>
@@ -143,3 +105,15 @@ function Services() {
     </SiteLayout>
   );
 }
+
+async function loader() {
+  const [services, siteSettings, heroSections] = await Promise.all([
+    getServices(),
+    getSiteSettingsShared(),
+    getHeroSections(),
+  ]);
+  const hero = heroSections.find((h) => h.page === "services");
+  return { services, siteSettings, hero };
+}
+
+ServicesPage.loader = loader;

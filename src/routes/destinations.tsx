@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet, useRouterState } from "@tanstack/react-router";
+import { useLoaderData } from "react-router-dom";
+import { useEffect } from "react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
 import { DestinationCard } from "./index";
 import {
@@ -9,62 +10,19 @@ import {
   type SiteSettings,
   type HeroSection,
 } from "@/sanity/queries";
-import { breadcrumbSchema, webpageSchema, jsonLdScript } from "@/lib/seo";
 
-export const Route = createFileRoute("/destinations")({
-  loader: async () => {
-    const [destinations, siteSettings, heroSections] = await Promise.all([
-      getDestinations(),
-      getSiteSettingsShared(),
-      getHeroSections(),
-    ]);
-    const hero = heroSections.find((h) => h.page === "destinations");
-    return { destinations, siteSettings, hero };
-  },
-  head: ({ loaderData }) => {
-    const { siteSettings } = loaderData as {
-      destinations: DestinationListItem[];
-      siteSettings: SiteSettings | null;
-    };
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    const title = `Study Abroad Destinations — ${name}`;
-    const desc = `Explore study abroad and immigration destinations across 25+ countries with ${name}. Find your perfect path.`;
-    const siteUrl = "https://rad-architecture-showcase.vercel.app/destinations";
-    const schemas = [
-      webpageSchema(title, desc, siteUrl),
-      breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app" },
-        { name: "Destinations", url: siteUrl },
-      ]),
-    ];
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:url", content: siteUrl },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: desc },
-      ],
-      links: [{ rel: "canonical", href: siteUrl }],
-      scripts: schemas.map(jsonLdScript),
-    };
-  },
-  component: Destinations,
-});
-
-function Destinations() {
-  const { destinations, hero } = Route.useLoaderData() as {
+export default function DestinationsPage() {
+  const { destinations, hero, siteSettings } = useLoaderData() as {
     destinations: DestinationListItem[];
     siteSettings: SiteSettings | null;
     hero: HeroSection | undefined;
   };
-  const matches = useRouterState({ select: (s) => s.matches });
-  const hasSlugChild = matches.some((m) => m.routeId === "/destinations/$slug");
   const slide = hero?.slides?.[0];
 
-  if (hasSlugChild) return <Outlet />;
+  useEffect(() => {
+    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+    document.title = `Study Abroad Destinations — ${name}`;
+  }, [siteSettings]);
 
   return (
     <SiteLayout>
@@ -96,3 +54,15 @@ function Destinations() {
     </SiteLayout>
   );
 }
+
+async function loader() {
+  const [destinations, siteSettings, heroSections] = await Promise.all([
+    getDestinations(),
+    getSiteSettingsShared(),
+    getHeroSections(),
+  ]);
+  const hero = heroSections.find((h) => h.page === "destinations");
+  return { destinations, siteSettings, hero };
+}
+
+DestinationsPage.loader = loader;

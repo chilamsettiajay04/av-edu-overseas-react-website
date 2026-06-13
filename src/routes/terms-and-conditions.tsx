@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useLoaderData } from "react-router-dom";
+import { useEffect } from "react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
 import {
   getTermsConditions,
@@ -8,59 +9,18 @@ import {
   type SiteSettings,
   type HeroSection,
 } from "@/sanity/queries";
-import { breadcrumbSchema, webpageSchema, jsonLdScript } from "@/lib/seo";
 
-export const Route = createFileRoute("/terms-and-conditions")({
-  loader: async () => {
-    const [data, siteSettings, heroSections] = await Promise.all([
-      getTermsConditions(),
-      getSiteSettingsShared(),
-      getHeroSections(),
-    ]);
-    const hero = heroSections.find((h) => h.page === "terms-conditions");
-    return { data, siteSettings, hero };
-  },
-  head: ({ loaderData }) => {
-    const { data, siteSettings } = loaderData as {
-      data: TermsConditionsData | null;
-      siteSettings: SiteSettings | null;
-    };
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    const title = data?.metaTitle || `Terms & Conditions — ${name}`;
-    const desc =
-      data?.metaDescription ||
-      `Read the Terms & Conditions of ${name} — governing your use of our website and services.`;
-    const siteUrl = "https://rad-architecture-showcase.vercel.app/terms-and-conditions";
-    const schemas = [
-      webpageSchema(title, desc, siteUrl),
-      breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app" },
-        { name: "Terms & Conditions", url: siteUrl },
-      ]),
-    ];
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:url", content: siteUrl },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: desc },
-      ],
-      links: [{ rel: "canonical", href: siteUrl }],
-      scripts: schemas.map(jsonLdScript),
-    };
-  },
-  component: TermsAndConditions,
-});
-
-function TermsAndConditions() {
-  const { data, hero } = Route.useLoaderData() as {
+export default function TermsPage() {
+  const { data, hero, siteSettings } = useLoaderData() as {
     data: TermsConditionsData | null;
     siteSettings: SiteSettings | null;
     hero: HeroSection | undefined;
   };
+
+  useEffect(() => {
+    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+    document.title = data?.metaTitle || `Terms & Conditions — ${name}`;
+  }, [data, siteSettings]);
 
   if (!data) return null;
 
@@ -111,3 +71,15 @@ function TermsAndConditions() {
     </SiteLayout>
   );
 }
+
+async function loader() {
+  const [data, siteSettings, heroSections] = await Promise.all([
+    getTermsConditions(),
+    getSiteSettingsShared(),
+    getHeroSections(),
+  ]);
+  const hero = heroSections.find((h) => h.page === "terms-conditions");
+  return { data, siteSettings, hero };
+}
+
+TermsPage.loader = loader;

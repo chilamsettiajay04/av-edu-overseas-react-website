@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useLoaderData } from "react-router-dom";
+import { useEffect } from "react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
 import {
   getPrivacyPolicy,
@@ -8,59 +9,18 @@ import {
   type SiteSettings,
   type HeroSection,
 } from "@/sanity/queries";
-import { breadcrumbSchema, webpageSchema, jsonLdScript } from "@/lib/seo";
 
-export const Route = createFileRoute("/privacy-policy")({
-  loader: async () => {
-    const [data, siteSettings, heroSections] = await Promise.all([
-      getPrivacyPolicy(),
-      getSiteSettingsShared(),
-      getHeroSections(),
-    ]);
-    const hero = heroSections.find((h) => h.page === "privacy-policy");
-    return { data, siteSettings, hero };
-  },
-  head: ({ loaderData }) => {
-    const { data, siteSettings } = loaderData as {
-      data: PrivacyPolicyData | null;
-      siteSettings: SiteSettings | null;
-    };
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    const title = data?.metaTitle || `Privacy Policy — ${name}`;
-    const desc =
-      data?.metaDescription ||
-      `Read the Privacy Policy of ${name} — learn how we collect, use, and protect your personal information.`;
-    const siteUrl = "https://rad-architecture-showcase.vercel.app/privacy-policy";
-    const schemas = [
-      webpageSchema(title, desc, siteUrl),
-      breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app" },
-        { name: "Privacy Policy", url: siteUrl },
-      ]),
-    ];
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:url", content: siteUrl },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: desc },
-      ],
-      links: [{ rel: "canonical", href: siteUrl }],
-      scripts: schemas.map(jsonLdScript),
-    };
-  },
-  component: PrivacyPolicy,
-});
-
-function PrivacyPolicy() {
-  const { data, hero } = Route.useLoaderData() as {
+export default function PrivacyPolicyPage() {
+  const { data, hero, siteSettings } = useLoaderData() as {
     data: PrivacyPolicyData | null;
     siteSettings: SiteSettings | null;
     hero: HeroSection | undefined;
   };
+
+  useEffect(() => {
+    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+    document.title = data?.metaTitle || `Privacy Policy — ${name}`;
+  }, [data, siteSettings]);
 
   if (!data) return null;
 
@@ -111,3 +71,15 @@ function PrivacyPolicy() {
     </SiteLayout>
   );
 }
+
+async function loader() {
+  const [data, siteSettings, heroSections] = await Promise.all([
+    getPrivacyPolicy(),
+    getSiteSettingsShared(),
+    getHeroSections(),
+  ]);
+  const hero = heroSections.find((h) => h.page === "privacy-policy");
+  return { data, siteSettings, hero };
+}
+
+PrivacyPolicyPage.loader = loader;

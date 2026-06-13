@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { JSX, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Phone, Mail, Menu, X, MapPin, Clock } from "lucide-react";
 import { toast } from "sonner";
@@ -245,17 +245,18 @@ function MainNav() {
         <Logo tone={transparent ? "light" : "dark"} />
         <nav className="hidden items-center gap-8 lg:flex">
           {NAV.map((item) => (
-            <Link
+            <NavLink
               key={item.to}
               to={item.to}
-              activeOptions={{ exact: item.to === "/" }}
-              className={`text-[11px] uppercase tracking-[0.22em] transition-colors hover:text-primary ${
-                transparent ? "text-white/80" : "text-foreground/80"
-              }`}
-              activeProps={{ className: "text-primary" }}
+              end={item.to === "/"}
+              className={({ isActive }) =>
+                `text-[11px] uppercase tracking-[0.22em] transition-colors hover:text-primary ${
+                  transparent ? "text-white/80" : "text-foreground/80"
+                } ${isActive ? "text-primary" : ""}`
+              }
             >
               {item.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
         <button

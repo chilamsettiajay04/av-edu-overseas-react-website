@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useLoaderData } from "react-router-dom";
+import { useEffect, useState, type FormEvent } from "react";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
@@ -13,50 +13,9 @@ import {
   type DestinationListItem,
   type HeroSection,
 } from "@/sanity/queries";
-import { breadcrumbSchema, webpageSchema, jsonLdScript } from "@/lib/seo";
 
-export const Route = createFileRoute("/contact")({
-  loader: async () => {
-    const [destinations, siteSettings, heroSections] = await Promise.all([
-      getDestinations(),
-      getSiteSettingsShared(),
-      getHeroSections(),
-    ]);
-    const hero = heroSections.find((h) => h.page === "contact");
-    return { destinations, siteSettings, hero };
-  },
-  head: ({ loaderData }) => {
-    const { siteSettings } = loaderData as { siteSettings: SiteSettings | null };
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    const title = `Contact — ${name}`;
-    const desc = `Get in touch with ${name} — our team is ready to support your overseas education and immigration journey.`;
-    const siteUrl = "https://rad-architecture-showcase.vercel.app/contact";
-    const schemas = [
-      webpageSchema(title, desc, siteUrl),
-      breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app" },
-        { name: "Contact", url: siteUrl },
-      ]),
-    ];
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:url", content: siteUrl },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: desc },
-      ],
-      links: [{ rel: "canonical", href: siteUrl }],
-      scripts: schemas.map(jsonLdScript),
-    };
-  },
-  component: Contact,
-});
-
-function Contact() {
-  const { destinations, hero } = Route.useLoaderData() as {
+export default function ContactPage() {
+  const { destinations, hero } = useLoaderData() as {
     destinations: DestinationListItem[];
     siteSettings: SiteSettings | null;
     hero: HeroSection | undefined;
@@ -64,6 +23,11 @@ function Contact() {
   const s = useSiteSettings();
   const slide = hero?.slides?.[0];
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const name = s?.companyName || "Av Edu Overseas Consultancy";
+    document.title = `Contact — ${name}`;
+  }, [s]);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -208,3 +172,15 @@ function Contact() {
     </SiteLayout>
   );
 }
+
+async function loader() {
+  const [destinations, siteSettings, heroSections] = await Promise.all([
+    getDestinations(),
+    getSiteSettingsShared(),
+    getHeroSections(),
+  ]);
+  const hero = heroSections.find((h) => h.page === "contact");
+  return { destinations, siteSettings, hero };
+}
+
+ContactPage.loader = loader;

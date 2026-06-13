@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useLoaderData } from "react-router-dom";
+import { useEffect } from "react";
 import { Star } from "lucide-react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
 import {
@@ -9,58 +10,19 @@ import {
   type SiteSettings,
   type HeroSection,
 } from "@/sanity/queries";
-import { breadcrumbSchema, webpageSchema, jsonLdScript } from "@/lib/seo";
 
-export const Route = createFileRoute("/testimonials")({
-  loader: async () => {
-    const [testimonials, siteSettings, heroSections] = await Promise.all([
-      getTestimonials(),
-      getSiteSettingsShared(),
-      getHeroSections(),
-    ]);
-    const hero = heroSections.find((h) => h.page === "testimonials");
-    return { testimonials, siteSettings, hero };
-  },
-  head: ({ loaderData }) => {
-    const { siteSettings } = loaderData as {
-      testimonials: TestimonialData[];
-      siteSettings: SiteSettings | null;
-    };
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    const title = `Student Success Stories — ${name}`;
-    const desc = `Read real student success stories from ${name} alumni studying and working around the world.`;
-    const siteUrl = "https://rad-architecture-showcase.vercel.app/testimonials";
-    const schemas = [
-      webpageSchema(title, desc, siteUrl),
-      breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app" },
-        { name: "Testimonials", url: siteUrl },
-      ]),
-    ];
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { property: "og:title", content: title },
-        { property: "og:description", content: desc },
-        { property: "og:url", content: siteUrl },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: desc },
-      ],
-      links: [{ rel: "canonical", href: siteUrl }],
-      scripts: schemas.map(jsonLdScript),
-    };
-  },
-  component: Testimonials,
-});
-
-function Testimonials() {
-  const { testimonials, hero } = Route.useLoaderData() as {
+export default function TestimonialsPage() {
+  const { testimonials, hero, siteSettings } = useLoaderData() as {
     testimonials: TestimonialData[];
     siteSettings: SiteSettings | null;
     hero: HeroSection | undefined;
   };
   const slide = hero?.slides?.[0];
+
+  useEffect(() => {
+    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+    document.title = `Student Success Stories — ${name}`;
+  }, [siteSettings]);
 
   return (
     <SiteLayout>
@@ -104,3 +66,15 @@ function Testimonials() {
     </SiteLayout>
   );
 }
+
+async function loader() {
+  const [testimonials, siteSettings, heroSections] = await Promise.all([
+    getTestimonials(),
+    getSiteSettingsShared(),
+    getHeroSections(),
+  ]);
+  const hero = heroSections.find((h) => h.page === "testimonials");
+  return { testimonials, siteSettings, hero };
+}
+
+TestimonialsPage.loader = loader;

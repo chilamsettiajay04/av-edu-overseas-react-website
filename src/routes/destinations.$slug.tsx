@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { Link, useLoaderData, useRouteError, isRouteErrorResponse } from "react-router-dom";
 import { SiteLayout, Reveal } from "@/components/site/SiteLayout";
 import { Globe } from "lucide-react";
 import {
@@ -8,90 +8,17 @@ import {
   type DestInfo,
   type SiteSettings,
 } from "@/sanity/queries";
-import { breadcrumbSchema, webpageSchema, destinationSchema, jsonLdScript } from "@/lib/seo";
 
-export const Route = createFileRoute("/destinations/$slug")({
-  loader: async ({ params: { slug } }) => {
-    const [dest, siteSettings] = await Promise.all([
-      getDestinationBySlug(slug),
-      getSiteSettingsShared(),
-    ]);
-    if (!dest) throw notFound();
-    return { dest, siteSettings };
-  },
-  head: ({ loaderData }) => {
-    const data = loaderData as { dest: DestInfo; siteSettings: SiteSettings | null } | undefined;
-    if (!data) return { meta: [{ title: "Destination" }] };
-    const name = data.siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    const title = `${data.dest.name} — Study Abroad with ${name}`;
-    const desc = `Study, work, and immigrate to ${data.dest.name}. Tuition, cost of living, top universities, and visa pathways.`;
-    const siteUrl = `https://rad-architecture-showcase.vercel.app/destinations/${data.dest.name.toLowerCase().replace(/\s+/g, "-")}`;
-    const schemas = [
-      webpageSchema(title, desc, siteUrl),
-      destinationSchema(data.dest, data.siteSettings),
-      breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app" },
-        { name: "Destinations", url: "https://rad-architecture-showcase.vercel.app/destinations" },
-        { name: data.dest.name, url: siteUrl },
-      ]),
-    ];
-    return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        {
-          name: "keywords",
-          content: `study in ${data.dest.name}, ${data.dest.name} universities, ${data.dest.name} student visa, study abroad ${data.dest.name}, immigration ${data.dest.name}`,
-        },
-        { property: "og:title", content: title },
-        { property: "og:description", content: data.dest.tagline },
-        { property: "og:url", content: siteUrl },
-        { property: "og:image", content: data.dest.heroImage },
-        { property: "og:image:alt", content: `Study in ${data.dest.name}` },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: data.dest.tagline },
-        { name: "twitter:image", content: data.dest.heroImage },
-      ],
-      links: [{ rel: "canonical", href: siteUrl }],
-      scripts: schemas.map(jsonLdScript),
-    };
-  },
-  notFoundComponent: () => (
-    <SiteLayout>
-      <div className="mx-auto max-w-3xl px-6 py-32 text-center">
-        <h1 className="font-serif text-5xl mb-4">Destination not found</h1>
-        <p className="text-muted-foreground mb-8">
-          We don't have a guide for this destination yet.
-        </p>
-        <Link
-          to="/"
-          className="inline-block border border-primary bg-primary px-10 py-4 text-[11px] uppercase tracking-[0.3em] text-primary-foreground transition-all duration-300 hover:bg-transparent hover:text-primary"
-        >
-          Back home
-        </Link>
-      </div>
-    </SiteLayout>
-  ),
-  errorComponent: ({ error, reset }: { error: Error; reset: () => void }) => (
-    <SiteLayout>
-      <div className="mx-auto max-w-3xl px-6 py-32 text-center">
-        <h1 className="font-serif text-4xl mb-4">Something went wrong</h1>
-        <p className="text-muted-foreground mb-8">{error.message}</p>
-        <button
-          onClick={reset}
-          className="inline-block border border-primary bg-primary px-10 py-4 text-[11px] uppercase tracking-[0.3em] text-primary-foreground transition-all duration-300 hover:bg-transparent hover:text-primary"
-        >
-          Try again
-        </button>
-      </div>
-    </SiteLayout>
-  ),
-  component: DestinationDetail,
-});
+export default function DestinationDetailPage() {
+  const { dest, siteSettings } = useLoaderData() as {
+    dest: DestInfo;
+    siteSettings: SiteSettings | null;
+  };
 
-function DestinationDetail() {
-  const { dest } = Route.useLoaderData() as { dest: DestInfo; siteSettings: SiteSettings | null };
+  useEffect(() => {
+    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+    document.title = `${dest.name} — Study Abroad with ${name}`;
+  }, [dest, siteSettings]);
 
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
@@ -320,3 +247,54 @@ function DestinationDetail() {
     </SiteLayout>
   );
 }
+
+export function DestinationErrorPage() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error) && error.status === 404) {
+    return (
+      <SiteLayout>
+        <div className="mx-auto max-w-3xl px-6 py-32 text-center">
+          <h1 className="font-serif text-5xl mb-4">Destination not found</h1>
+          <p className="text-muted-foreground mb-8">
+            We don't have a guide for this destination yet.
+          </p>
+          <Link
+            to="/"
+            className="inline-block border border-primary bg-primary px-10 py-4 text-[11px] uppercase tracking-[0.3em] text-primary-foreground transition-all duration-300 hover:bg-transparent hover:text-primary"
+          >
+            Back home
+          </Link>
+        </div>
+      </SiteLayout>
+    );
+  }
+
+  const message = error instanceof Error ? error.message : "Something went wrong";
+
+  return (
+    <SiteLayout>
+      <div className="mx-auto max-w-3xl px-6 py-32 text-center">
+        <h1 className="font-serif text-4xl mb-4">Something went wrong</h1>
+        <p className="text-muted-foreground mb-8">{message}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="inline-block border border-primary bg-primary px-10 py-4 text-[11px] uppercase tracking-[0.3em] text-primary-foreground transition-all duration-300 hover:bg-transparent hover:text-primary"
+        >
+          Try again
+        </button>
+      </div>
+    </SiteLayout>
+  );
+}
+
+async function loader({ params }: { params: { slug?: string } }) {
+  const [dest, siteSettings] = await Promise.all([
+    getDestinationBySlug(params.slug!),
+    getSiteSettingsShared(),
+  ]);
+  if (!dest) throw new Response("Not Found", { status: 404 });
+  return { dest, siteSettings };
+}
+
+DestinationDetailPage.loader = loader;
