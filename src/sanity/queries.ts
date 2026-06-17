@@ -1,4 +1,4 @@
-import { client } from "./client";
+import { cachedClientFetch } from "./client";
 
 const heroSectionsQuery = `*[_type == "heroSection"] {
   "page": page,
@@ -23,7 +23,7 @@ export interface HeroSection {
 }
 
 export async function getHeroSections(): Promise<HeroSection[]> {
-  return client.fetch(heroSectionsQuery);
+  return cachedClientFetch(heroSectionsQuery);
 }
 
 const mainCtaQuery = `*[_type == "mainCta"][0]{
@@ -45,7 +45,7 @@ export interface MainCta {
 }
 
 export async function getMainCta(): Promise<MainCta | null> {
-  return client.fetch(mainCtaQuery);
+  return cachedClientFetch(mainCtaQuery);
 }
 
 const servicesQuery = `*[_type == "service"] | order(service_sort_order asc) {
@@ -193,27 +193,27 @@ export interface TestimonialData {
 }
 
 export async function getServices(): Promise<ServiceData[]> {
-  return client.fetch(servicesQuery);
+  return cachedClientFetch(servicesQuery);
 }
 
 export async function getDestinations(): Promise<DestinationListItem[]> {
-  return client.fetch(destinationsListQuery);
+  return cachedClientFetch(destinationsListQuery);
 }
 
 export async function getDestinationBySlug(slug: string): Promise<DestInfo | null> {
-  return client.fetch(destinationDetailQuery, { slug });
+  return cachedClientFetch(destinationDetailQuery, { slug });
 }
 
 export async function getStats(): Promise<StatData[]> {
-  return client.fetch(statsQuery);
+  return cachedClientFetch(statsQuery);
 }
 
 export async function getFaqs(): Promise<FaqData[]> {
-  return client.fetch(faqsQuery);
+  return cachedClientFetch(faqsQuery);
 }
 
 export async function getTestimonials(): Promise<TestimonialData[]> {
-  return client.fetch(testimonialsQuery);
+  return cachedClientFetch(testimonialsQuery);
 }
 
 const privacyPolicyQuery = `*[_type == "privacyPolicy"][0]{
@@ -267,11 +267,11 @@ export interface TermsConditionsData {
 }
 
 export async function getPrivacyPolicy(): Promise<PrivacyPolicyData | null> {
-  return client.fetch(privacyPolicyQuery);
+  return cachedClientFetch(privacyPolicyQuery);
 }
 
 export async function getTermsConditions(): Promise<TermsConditionsData | null> {
-  return client.fetch(termsConditionsQuery);
+  return cachedClientFetch(termsConditionsQuery);
 }
 
 const siteSettingsQuery = `*[_type == "siteSettings"][0]{
@@ -355,7 +355,7 @@ export interface SiteSettings {
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {
-  return client.fetch(siteSettingsQuery);
+  return cachedClientFetch(siteSettingsQuery);
 }
 
 let _siteSettingsPromise: Promise<SiteSettings | null> | null = null;

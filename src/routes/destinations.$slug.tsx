@@ -20,33 +20,15 @@ export default function DestinationDetailPage() {
     document.title = `${dest.name} — Study Abroad with ${name}`;
   }, [dest, siteSettings]);
 
-  const leftRef = useRef<HTMLDivElement>(null);
-  const rightRef = useRef<HTMLDivElement>(null);
-  const [gridStyle, setGridStyle] = useState<React.CSSProperties>({});
-
-  useEffect(() => {
-    const measure = () => {
-      if (leftRef.current && rightRef.current) {
-        if (window.innerWidth >= 768) {
-          const leftH = leftRef.current.scrollHeight;
-          const rightH = rightRef.current.scrollHeight;
-          setGridStyle({ maxHeight: Math.min(leftH, rightH) });
-        } else {
-          setGridStyle({});
-        }
-      }
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [dest]);
-
   const stats = [
     { label: dest.statTuitionLabel || "Tuition / Year", value: dest.costOfStudyShort },
     { label: dest.statLivingCostLabel || "Living Cost", value: dest.costOfLivingShort },
     { label: dest.statRankingLabel || "Global Ranking", value: dest.rankingShort },
     { label: dest.statWorkRightsLabel || "Work Rights", value: dest.workRightsShort },
   ];
+
+  // Tab state for Universities/Visa
+  const [activeTab, setActiveTab] = useState<"universities" | "visa">("universities");
 
   return (
     <SiteLayout>
@@ -70,8 +52,11 @@ export default function DestinationDetailPage() {
       </section>
 
       {/* Stats Row */}
-      <div className="relative z-10 mx-auto -mt-12 max-w-7xl px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-xl border border-border bg-border shadow-xl">
+      <div className="relative z-10 mx-auto -mt-14 max-w-7xl px-6">
+        <p className="text-[12px] text-white/70 mb-4 text-center">
+          All amounts are shown in {dest.name} currency
+        </p>
+        <div className=" grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-xl border border-border bg-border shadow-xl">
           {stats.map((s) => (
             <div key={s.label} className="bg-white p-6 md:p-8">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -86,15 +71,15 @@ export default function DestinationDetailPage() {
       {/* Overview + Highlights */}
       <section className="bg-white">
         <div className="pi-section">
-          <div className="grid gap-6 md:gap-12 md:grid-cols-2">
-            <div ref={leftRef}>
+          <div className="grid gap-6 md:gap-12 md:grid-cols-3">
+            <div className="col-span-2">
               <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
                 {dest.overviewSectionLabel || "Overview"}
               </p>
               <h2 className="mt-2 text-3xl font-bold text-gray-900">{dest.overviewHeading}</h2>
               <p className="mt-4 text-gray-600 leading-relaxed">{dest.overview}</p>
             </div>
-            <div ref={rightRef}>
+            <div>
               <div className="rounded-2xl pt-0 md:pt-6">
                 <h3 className="text-xl font-semibold text-gray-900">
                   {dest.keyHighlightsHeading || "Key Highlights"}
@@ -141,7 +126,7 @@ export default function DestinationDetailPage() {
         </div>
       </section>
 
-      {/* Universities & Visa */}
+      {/* Universities & Visa - New Toggle + Grid Section */}
       <section className="bg-[#fafafa]">
         <div className="pi-section">
           <Reveal className="mb-14 text-center">
@@ -152,52 +137,77 @@ export default function DestinationDetailPage() {
               {dest.academicsHeading || "Premier Institutions & Visa Pathways"}
             </h2>
           </Reveal>
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border border border-border rounded-xl overflow-hidden"
-            style={gridStyle}
-          >
-            <div ref={leftRef} className="bg-white p-10 md:p-12 md:overflow-y-auto">
-              <h3 className="text-2xl font-semibold mb-8">
-                {dest.universitiesHeading || "Leading Universities"}
-              </h3>
-              <div className="space-y-5">
-                {dest.universities.map((u, i) => (
-                  <div
-                    key={u.name}
-                    className="group flex items-center justify-between border-b border-border pb-4"
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className="text-xs font-medium text-muted-foreground tabular-nums">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className="font-medium group-hover:text-primary transition-colors">
-                        {u.name}
-                      </span>
-                    </div>
-                    <div className="text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                      {u.badge}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div ref={rightRef} className="bg-card p-10 md:p-12 md:overflow-y-auto">
-              <h3 className="text-2xl font-semibold mb-8">
-                {dest.visaOptionsHeading || "Visa Options"}
-              </h3>
-              <div className="space-y-4">
-                {dest.visaOptions.map((v) => (
-                  <div
-                    key={v.name}
-                    className="rounded-xl border border-border bg-white p-6 shadow-sm"
-                  >
-                    <p className="font-bold">{v.name}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{v.description}</p>
-                  </div>
-                ))}
-              </div>
+
+          {/* Toggle Buttons */}
+          <div className="flex justify-center mb-12">
+            <div className="inline-flex rounded-md shadow-sm" role="group">
+              <button
+                onClick={() => setActiveTab("universities")}
+                className={`px-6 py-3 text-sm font-medium rounded-l-lg transition-all ${
+                  activeTab === "universities"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                } border border-gray-200`}
+              >
+                Universities
+              </button>
+              <button
+                onClick={() => setActiveTab("visa")}
+                className={`px-6 py-3 text-sm font-medium rounded-r-lg transition-all ${
+                  activeTab === "visa"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                } border border-gray-200`}
+              >
+                Visa Options
+              </button>
             </div>
           </div>
+
+          {/* Universities Grid */}
+          {activeTab === "universities" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
+              {[...dest.universities]
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((u, index) => (
+                  <div
+                    key={u.name}
+                    className="group relative bg-white rounded-xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex flex-col items-start justify-between">
+                      <div className="text-xs mb-1 flex items-start justify-between w-full">
+                        <span className=" text-xs font-medium text-muted-foreground">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        {u.badge && (
+                          <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                            {u.badge}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-semibold text-gray-900 pr-2">{u.name}</h3>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+
+          {/* Visa Options Grid */}
+          {activeTab === "visa" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
+              {dest.visaOptions.map((v) => (
+                <div
+                  key={v.name}
+                  className="bg-white rounded-xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <h3 className="font-bold text-gray-900">{v.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+                    {v.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

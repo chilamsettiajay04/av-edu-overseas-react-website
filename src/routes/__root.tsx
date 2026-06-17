@@ -1,4 +1,4 @@
-import { Outlet, Link, useLoaderData, useRouteError, isRouteErrorResponse } from "react-router-dom";
+import { Outlet, Link, useLoaderData, useRouteError, isRouteErrorResponse, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -11,6 +11,11 @@ export async function rootLoader() {
 
 export function RootLayout() {
   const siteSettings = useLoaderData() as SiteSettings | null;
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   useEffect(() => {
     const s = siteSettings;

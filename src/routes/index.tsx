@@ -198,12 +198,12 @@ function Hero({ slides }: { slides: { image: string; heading?: string; subtitle?
               i === index ? "scale-110" : "scale-100"
             }`}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/60 to-black/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-black/10 to-black/0" />
         </div>
       ))}
 
-      <div className="absolute inset-0 z-10 flex items-center px-6 sm:px-12">
-        <div className="mx-auto max-w-7xl w-full">
+      <div className="absolute inset-0 z-10 flex items-center pr-6 md:pr-12">
+        <div className="ml-0 my-auto max-w-7xl w-fit bg-primary/60 p-6">
           <div key={index} className="animate-fade-in">
             <p className="font-serif text-[11px] uppercase tracking-[0.4em] text-white/60">
               {s?.companyTagline || "Your Gateway to Global Opportunities"}
@@ -277,7 +277,7 @@ function Intro() {
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
-                Trusted Since 2012
+                Built on trust, driven by results
               </p>
               <h2 className="mt-6 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-5xl accent-underline">
                 Welcome to <span className="text-primary">{name}</span>
@@ -378,7 +378,7 @@ function FeaturedServices({ services }: { services: ServiceData[] }) {
             What We Offer
           </p>
           <h2 className="mt-4 accent-underline text-3xl font-semibold text-foreground sm:text-4xl md:text-5xl">
-            Our Services
+              Our Areas of experties
           </h2>
         </Reveal>
 

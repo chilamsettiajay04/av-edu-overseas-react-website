@@ -10,12 +10,21 @@ import TestimonialsPage from "./routes/testimonials";
 import PrivacyPolicyPage from "./routes/privacy-policy";
 import TermsPage from "./routes/terms-and-conditions";
 
+function PageSkeleton() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted-foreground border-t-primary" />
+    </div>
+  );
+}
+
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
     loader: rootLoader,
     errorElement: <ErrorPage />,
+    HydrateFallback: PageSkeleton,
     children: [
       { index: true, element: <HomePage />, loader: HomePage.loader },
       { path: "about", element: <AboutPage />, loader: AboutPage.loader },

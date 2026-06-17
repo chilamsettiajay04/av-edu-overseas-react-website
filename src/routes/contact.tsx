@@ -1,9 +1,9 @@
 import { useLoaderData } from "react-router-dom";
 import { useEffect, useState, type FormEvent } from "react";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
 import { useSiteSettings } from "@/lib/SiteSettingsContext";
+import { submitToSheet } from "@/lib/sheetSubmit";
 import {
   getDestinations,
   getSiteSettingsShared,
@@ -14,6 +14,205 @@ import {
   type HeroSection,
 } from "@/sanity/queries";
 
+// ----------------------------------------------------------------------
+// OfficeInfoPanel – single office (no tabs)
+// ----------------------------------------------------------------------
+function OfficeInfoPanel({
+  office,
+  googleMapsApiKey,
+}: {
+  office: Office;
+  googleMapsApiKey: string | undefined;
+}) {
+  const mapSrc =
+    office?.officeAddress && googleMapsApiKey
+      ? `https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${encodeURIComponent(office.officeAddress)}`
+      : office?.officeAddress
+        ? `https://maps.google.com/maps?q=${encodeURIComponent(office.officeAddress)}&output=embed`
+        : "";
+
+  const googleMapsLink = office?.officeAddress
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(office.officeAddress)}`
+    : "#";
+
+  return (
+    <div className="flex flex-col md:flex-row min-h-105 overflow-hidden">
+      {/* Dark left panel */}
+      <div className="bg-[#0d1b2e] text-white md:w-2/5 flex flex-col justify-between p-10">
+        <div>
+          <h3 className="text-xl font-semibold mb-1">{office.officeTitle}</h3>
+          {office.isMainBranch && (
+            <span className="rounded bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
+              Main Branch
+            </span>
+          )}
+          {office.officeAddress && (
+            <p className="text-sm leading-relaxed text-slate-300 whitespace-pre-line my-6">
+              {office.officeAddress}
+            </p>
+          )}
+          {office.officePhone && (
+            <p className="text-sm text-slate-300 mb-1">
+              <span className="text-white font-medium">Voice: </span>
+              {office.officePhone}
+            </p>
+          )}
+          {office.officeEmail && (
+            <p className="text-sm text-slate-300 mb-1">
+              <span className="text-white font-medium">Email: </span>
+              {office.officeEmail}
+            </p>
+          )}
+          {office.officeHours && office.officeHours.length > 0 && (
+            <p className="text-sm text-slate-300 mt-3">{office.officeHours.join(" · ")}</p>
+          )}
+        </div>
+        <a
+          href={googleMapsLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-white border-b border-white pb-0.5 hover:opacity-70 transition-opacity mt-8 w-fit"
+        >
+          Open in Google Maps →
+        </a>
+      </div>
+
+      {/* Map right panel */}
+      <div className="md:w-3/5 h-72 md:h-auto">
+        {mapSrc ? (
+          <iframe
+            title={`${office.officeTitle} Location`}
+            src={mapSrc}
+            width="100%"
+            height="100%"
+            style={{ border: 0, minHeight: "420px" }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        ) : (
+          <div className="flex h-full min-h-[420px] items-center justify-center bg-muted text-muted-foreground">
+            Map not available
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ----------------------------------------------------------------------
+// OfficeTabs – multiple offices (tabs + panel)
+// ----------------------------------------------------------------------
+function OfficeTabs({
+  offices,
+  googleMapsApiKey,
+}: {
+  offices: Office[];
+  googleMapsApiKey: string | undefined;
+}) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const active = offices[activeIndex];
+
+  const activeMapSrc =
+    active?.officeAddress && googleMapsApiKey
+      ? `https://www.google.com/maps/embed/v1/place?key=${googleMapsApiKey}&q=${encodeURIComponent(active.officeAddress)}`
+      : active?.officeAddress
+        ? `https://maps.google.com/maps?q=${encodeURIComponent(active.officeAddress)}&output=embed`
+        : "";
+
+  const googleMapsLink = active?.officeAddress
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(active.officeAddress)}`
+    : "#";
+
+  return (
+    <div>
+      {/* Tabs row */}
+      <div className="flex justify-center gap-0 mb-8 overflow-x-auto">
+        {offices.map((office, i) => (
+          <button
+            key={office.officeTitle}
+            onClick={() => setActiveIndex(i)}
+            className={`
+              relative shrink-0 px-6 py-4 text-sm font-medium transition-colors
+              ${
+                i === activeIndex
+                  ? "border-b-2 border-foreground text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }
+            `}
+          >
+            {office.officeTitle}
+          </button>
+        ))}
+      </div>
+
+      {/* Panel: dark info left + map right */}
+      <div className="flex flex-col md:flex-row min-h-105 overflow-hidden">
+        <div className="bg-[#0d1b2e] text-white md:w-2/5 flex flex-col justify-between p-10">
+          <div>
+            <h3 className="text-xl font-semibold mb-1">{active.officeTitle}</h3>
+            {active.isMainBranch && (
+              <span className="rounded bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
+                Main Branch
+              </span>
+            )}
+            {active.officeAddress && (
+              <p className="text-sm leading-relaxed text-slate-300 whitespace-pre-line my-6">
+                {active.officeAddress}
+              </p>
+            )}
+            {active.officePhone && (
+              <p className="text-sm text-slate-300 mb-1">
+                <span className="text-white font-medium">Voice: </span>
+                {active.officePhone}
+              </p>
+            )}
+            {active.officeEmail && (
+              <p className="text-sm text-slate-300 mb-1">
+                <span className="text-white font-medium">Email: </span>
+                {active.officeEmail}
+              </p>
+            )}
+            {active.officeHours && active.officeHours.length > 0 && (
+              <p className="text-sm text-slate-300 mt-3">{active.officeHours.join(" · ")}</p>
+            )}
+          </div>
+          <a
+            href={googleMapsLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-white border-b border-white pb-0.5 hover:opacity-70 transition-opacity mt-8 w-fit"
+          >
+            Open in Google Maps →
+          </a>
+        </div>
+        <div className="md:w-3/5 h-72 md:h-auto">
+          {activeMapSrc ? (
+            <iframe
+              key={activeMapSrc}
+              title={`${active.officeTitle} Location`}
+              src={activeMapSrc}
+              width="100%"
+              height="100%"
+              style={{ border: 0, minHeight: "420px" }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          ) : (
+            <div className="flex h-full min-h-[420px] items-center justify-center bg-muted text-muted-foreground">
+              Map not available
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ----------------------------------------------------------------------
+// ContactPage
+// ----------------------------------------------------------------------
 export default function ContactPage() {
   const { destinations, hero } = useLoaderData() as {
     destinations: DestinationListItem[];
@@ -29,14 +228,27 @@ export default function ContactPage() {
     document.title = `Contact — ${name}`;
   }, [s]);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      (e.target as HTMLFormElement).reset();
+    const form = e.target as HTMLFormElement;
+    const fd = new FormData(form);
+    try {
+      await submitToSheet({
+        source: "contact",
+        name: (fd.get("name") as string) || "",
+        email: (fd.get("email") as string) || "",
+        phone: (fd.get("phone") as string) || "",
+        destination: (fd.get("destination") as string) || "",
+        message: (fd.get("message") as string) || "",
+      });
+      form.reset();
       toast.success("Thanks! Our team will reach out within one business day.");
-    }, 600);
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const offices = s?.offices || [];
@@ -58,6 +270,7 @@ export default function ContactPage() {
     },
   ];
   const displayOffices = offices.length > 0 ? offices : fallbackOffices;
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   return (
     <SiteLayout>
@@ -69,27 +282,32 @@ export default function ContactPage() {
       <section className="bg-white">
         <div className="pi-section">
           <Reveal>
-            <form onSubmit={onSubmit} className="space-y-5 bg-card p-8 shadow-sm sm:p-10">
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <form onSubmit={onSubmit} className="space-y-1 bg-card p-8 shadow-sm sm:p-10">
+              <input name="_hp" type="text" className="sr-only" tabIndex={-1} autoComplete="off" />
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
                 <input
                   required
+                  name="name"
                   placeholder="Full Name"
                   className="border border-border bg-transparent px-4 py-3 text-sm focus:border-primary focus:outline-none"
                 />
                 <input
                   required
+                  name="email"
                   type="email"
                   placeholder="Email"
                   className="border border-border bg-transparent px-4 py-3 text-sm focus:border-primary focus:outline-none"
                 />
                 <input
                   required
+                  name="phone"
                   type="tel"
                   placeholder="Phone"
                   className="border border-border bg-transparent px-4 py-3 text-sm focus:border-primary focus:outline-none"
                 />
                 <select
                   required
+                  name="destination"
                   defaultValue=""
                   className="border border-border bg-transparent px-4 py-3 text-sm focus:border-primary focus:outline-none"
                 >
@@ -106,6 +324,7 @@ export default function ContactPage() {
               </div>
               <textarea
                 required
+                name="message"
                 rows={5}
                 placeholder="Tell us about your goals"
                 className="w-full resize-none border border-border bg-transparent px-4 py-3 text-sm focus:border-primary focus:outline-none"
@@ -120,52 +339,15 @@ export default function ContactPage() {
             </form>
           </Reveal>
 
-          <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {displayOffices.map((o) => (
-              <Reveal key={o.officeTitle}>
-                <div className="h-full bg-card p-8 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-semibold">{o.officeTitle}</h3>
-                    {o.isMainBranch && (
-                      <span className="rounded bg-primary px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary-foreground">
-                        Main Branch
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-2 h-px w-10 bg-primary" />
-                  <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-                    <li className="flex gap-3">
-                      <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                      {o.officeAddress}
-                    </li>
-                    {o.officePhone && (
-                      <li className="flex gap-3">
-                        <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                        {o.officePhone}
-                      </li>
-                    )}
-                    {o.officeEmail && (
-                      <li className="flex gap-3">
-                        <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                        {o.officeEmail}
-                      </li>
-                    )}
-                    {o.officeHours && o.officeHours.length > 0 && (
-                      <li className="flex gap-3">
-                        <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                        <span>
-                          {o.officeHours.map((h) => (
-                            <span key={h} className="block">
-                              {h}
-                            </span>
-                          ))}
-                        </span>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              </Reveal>
-            ))}
+          {/* Office section: tabs only if multiple offices */}
+          <div className="mt-8">
+            <Reveal>
+              {displayOffices.length > 1 ? (
+                <OfficeTabs offices={displayOffices} googleMapsApiKey={googleMapsApiKey} />
+              ) : displayOffices.length === 1 ? (
+                <OfficeInfoPanel office={displayOffices[0]} googleMapsApiKey={googleMapsApiKey} />
+              ) : null}
+            </Reveal>
           </div>
         </div>
       </section>
