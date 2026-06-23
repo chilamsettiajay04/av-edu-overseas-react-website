@@ -227,7 +227,8 @@ export default function ContactPage() {
 
   const name = s?.companyName || "Av Edu Overseas Consultancy";
   const title = `Contact — ${name}`;
-  const desc = "Get in touch with Av Edu Overseas Consultancy. Contact our team for personalized overseas education and immigration guidance.";
+  const desc =
+    "Get in touch with Av Edu Overseas Consultancy. Contact our team for personalized overseas education and immigration guidance.";
   const lbSchema = localBusinessSchema(s);
   useSEO({
     title,
@@ -235,7 +236,7 @@ export default function ContactPage() {
     canonicalPath: "/contact",
     jsonLd: [
       organizationSchema(s),
-      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/contact"),
+      webpageSchema(title, desc, "https://av-edu-overseas-react-website.vercel.app/contact"),
       ...(lbSchema ? [lbSchema] : []),
     ],
   });

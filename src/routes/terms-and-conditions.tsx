@@ -20,14 +20,20 @@ export default function TermsPage() {
 
   const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
   const title = data?.metaTitle || `Terms & Conditions — ${name}`;
-  const desc = data?.metaDescription || "Terms and Conditions governing your use of Av Edu Overseas Consultancy's website and services.";
+  const desc =
+    data?.metaDescription ||
+    "Terms and Conditions governing your use of Av Edu Overseas Consultancy's website and services.";
   useSEO({
     title,
     description: desc,
     canonicalPath: "/terms-and-conditions",
     jsonLd: [
       organizationSchema(siteSettings),
-      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/terms-and-conditions"),
+      webpageSchema(
+        title,
+        desc,
+        "https://av-edu-overseas-react-website.vercel.app/terms-and-conditions",
+      ),
     ],
   });
 

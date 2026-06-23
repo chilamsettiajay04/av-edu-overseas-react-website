@@ -30,10 +30,13 @@ export default function DestinationsPage() {
     canonicalPath: "/destinations",
     jsonLd: [
       organizationSchema(siteSettings),
-      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/destinations"),
+      webpageSchema(title, desc, "https://av-edu-overseas-react-website.vercel.app/destinations"),
       breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
-        { name: "Destinations", url: "https://rad-architecture-showcase.vercel.app/destinations" },
+        { name: "Home", url: "https://av-edu-overseas-react-website.vercel.app/" },
+        {
+          name: "Destinations",
+          url: "https://av-edu-overseas-react-website.vercel.app/destinations",
+        },
       ]),
     ],
   });

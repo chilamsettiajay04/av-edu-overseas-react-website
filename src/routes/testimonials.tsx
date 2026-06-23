@@ -30,10 +30,13 @@ export default function TestimonialsPage() {
     canonicalPath: "/testimonials",
     jsonLd: [
       organizationSchema(siteSettings),
-      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/testimonials"),
+      webpageSchema(title, desc, "https://av-edu-overseas-react-website.vercel.app/testimonials"),
       breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
-        { name: "Testimonials", url: "https://rad-architecture-showcase.vercel.app/testimonials" },
+        { name: "Home", url: "https://av-edu-overseas-react-website.vercel.app/" },
+        {
+          name: "Testimonials",
+          url: "https://av-edu-overseas-react-website.vercel.app/testimonials",
+        },
       ]),
     ],
   });

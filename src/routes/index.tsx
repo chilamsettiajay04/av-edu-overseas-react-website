@@ -81,7 +81,9 @@ export default function HomePage() {
   const s = siteSettings;
   const name = s?.companyName || "Av Edu Overseas Consultancy";
   const seoTitle = s?.seoTitle || `${name} — Your Gateway to Global Opportunities`;
-  const seoDesc = s?.seoDescription || "Your trusted partner for overseas education and immigration consultancy. Expert guidance for students and professionals seeking global opportunities.";
+  const seoDesc =
+    s?.seoDescription ||
+    "Your trusted partner for overseas education and immigration consultancy. Expert guidance for students and professionals seeking global opportunities.";
   useSEO({
     title: seoTitle,
     description: seoDesc,
@@ -89,7 +91,7 @@ export default function HomePage() {
     canonicalPath: "/",
     jsonLd: [
       organizationSchema(s),
-      webpageSchema(seoTitle, seoDesc, "https://rad-architecture-showcase.vercel.app/"),
+      webpageSchema(seoTitle, seoDesc, "https://av-edu-overseas-react-website.vercel.app/"),
       ...(faqs.length > 0 ? [faqSchema(faqs)] : []),
     ],
   });
@@ -388,7 +390,7 @@ function FeaturedServices({ services }: { services: ServiceData[] }) {
             What We Offer
           </p>
           <h2 className="mt-4 accent-underline text-3xl font-semibold text-foreground sm:text-4xl md:text-5xl">
-              Our Areas of Expertise
+            Our Areas of Expertise
           </h2>
         </Reveal>
 

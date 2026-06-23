@@ -30,10 +30,10 @@ export default function AboutPage() {
     canonicalPath: "/about",
     jsonLd: [
       organizationSchema(siteSettings),
-      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/about"),
+      webpageSchema(title, desc, "https://av-edu-overseas-react-website.vercel.app/about"),
       breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
-        { name: "About Us", url: "https://rad-architecture-showcase.vercel.app/about" },
+        { name: "Home", url: "https://av-edu-overseas-react-website.vercel.app/" },
+        { name: "About Us", url: "https://av-edu-overseas-react-website.vercel.app/about" },
       ]),
     ],
   });

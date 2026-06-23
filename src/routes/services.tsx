@@ -68,10 +68,10 @@ export default function ServicesPage() {
     canonicalPath: "/services",
     jsonLd: [
       organizationSchema(siteSettings),
-      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/services"),
+      webpageSchema(title, desc, "https://av-edu-overseas-react-website.vercel.app/services"),
       breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
-        { name: "Services", url: "https://rad-architecture-showcase.vercel.app/services" },
+        { name: "Home", url: "https://av-edu-overseas-react-website.vercel.app/" },
+        { name: "Services", url: "https://av-edu-overseas-react-website.vercel.app/services" },
       ]),
     ],
   });

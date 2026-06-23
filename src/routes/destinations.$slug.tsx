@@ -1,5 +1,11 @@
 import { useRef, useState } from "react";
-import { Link, useLoaderData, useParams, useRouteError, isRouteErrorResponse } from "react-router-dom";
+import {
+  Link,
+  useLoaderData,
+  useParams,
+  useRouteError,
+  isRouteErrorResponse,
+} from "react-router-dom";
 import { SiteLayout, Reveal } from "@/components/site/SiteLayout";
 import { Globe } from "lucide-react";
 import { useSEO } from "@/lib/useSEO";
@@ -27,11 +33,21 @@ export default function DestinationDetailPage() {
     canonicalPath: `/destinations/${slug}`,
     jsonLd: [
       organizationSchema(siteSettings),
-      webpageSchema(title, desc, `https://rad-architecture-showcase.vercel.app/destinations/${slug}`),
+      webpageSchema(
+        title,
+        desc,
+        `https://av-edu-overseas-react-website.vercel.app/destinations/${slug}`,
+      ),
       breadcrumbSchema([
-        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
-        { name: "Destinations", url: "https://rad-architecture-showcase.vercel.app/destinations" },
-        { name: dest.name, url: `https://rad-architecture-showcase.vercel.app/destinations/${slug}` },
+        { name: "Home", url: "https://av-edu-overseas-react-website.vercel.app/" },
+        {
+          name: "Destinations",
+          url: "https://av-edu-overseas-react-website.vercel.app/destinations",
+        },
+        {
+          name: dest.name,
+          url: `https://av-edu-overseas-react-website.vercel.app/destinations/${slug}`,
+        },
       ]),
       destinationSchema(dest, siteSettings),
     ],

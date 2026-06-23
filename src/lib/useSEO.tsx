@@ -9,7 +9,7 @@ import {
   type Dispatch,
 } from "react";
 
-const BASE_URL = "https://rad-architecture-showcase.vercel.app";
+const BASE_URL = "https://av-edu-overseas-react-website.vercel.app";
 
 export interface SEOConfig {
   title: string;
@@ -34,7 +34,7 @@ export function SEOProvider({
   const setPageConfig: Dispatch<SEOConfig | null> = useCallback(
     (pageConfig) => {
       hasOverride.current = pageConfig !== null;
-      setConfig(pageConfig ?? (defaultConfig ?? null));
+      setConfig(pageConfig ?? defaultConfig ?? null);
     },
     [defaultConfig],
   );

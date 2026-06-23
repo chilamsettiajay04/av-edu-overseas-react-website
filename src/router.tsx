@@ -13,7 +13,7 @@ import TermsPage from "./routes/terms-and-conditions";
 function PageSkeleton() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted-foreground border-t-primary" />
+      <img src="/website_loader.gif" alt="Loading..." className="h-44 w-44" />
     </div>
   );
 }

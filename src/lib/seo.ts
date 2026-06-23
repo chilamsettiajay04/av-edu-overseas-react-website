@@ -13,7 +13,7 @@ export function organizationSchema(s: SiteSettings | null) {
     "@context": "https://schema.org",
     "@type": "Organization",
     name,
-    url: "https://rad-architecture-showcase.vercel.app",
+    url: "https://av-edu-overseas-react-website.vercel.app",
     logo,
     description:
       s?.seoDescription || "Your gateway to global education and immigration opportunities.",
@@ -105,7 +105,7 @@ export function localBusinessSchema(s: SiteSettings | null) {
     name,
     telephone: phone,
     image: s?.companyLogoDark || "/logo.png",
-    url: "https://rad-architecture-showcase.vercel.app",
+    url: "https://av-edu-overseas-react-website.vercel.app",
     ...(primaryOffice?.officeAddress && {
       address: {
         "@type": "PostalAddress",

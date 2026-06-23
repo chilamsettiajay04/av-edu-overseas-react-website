@@ -20,14 +20,16 @@ export default function PrivacyPolicyPage() {
 
   const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
   const title = data?.metaTitle || `Privacy Policy — ${name}`;
-  const desc = data?.metaDescription || "Privacy Policy for Av Edu Overseas Consultancy. Learn how we collect, use, and protect your personal information.";
+  const desc =
+    data?.metaDescription ||
+    "Privacy Policy for Av Edu Overseas Consultancy. Learn how we collect, use, and protect your personal information.";
   useSEO({
     title,
     description: desc,
     canonicalPath: "/privacy-policy",
     jsonLd: [
       organizationSchema(siteSettings),
-      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/privacy-policy"),
+      webpageSchema(title, desc, "https://av-edu-overseas-react-website.vercel.app/privacy-policy"),
     ],
   });
 

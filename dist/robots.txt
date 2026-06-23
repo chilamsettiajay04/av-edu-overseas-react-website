@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rad-architecture-showcase.vercel.app/sitemap.xml
+Sitemap: https://av-edu-overseas-react-website.vercel.app/sitemap.xml
