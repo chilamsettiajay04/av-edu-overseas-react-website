@@ -1,8 +1,10 @@
 import { useLoaderData } from "react-router-dom";
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
 import { useSiteSettings } from "@/lib/SiteSettingsContext";
+import { useSEO } from "@/lib/useSEO";
+import { organizationSchema, webpageSchema, localBusinessSchema } from "@/lib/seo";
 import { submitToSheet } from "@/lib/sheetSubmit";
 import {
   getDestinations,
@@ -223,10 +225,20 @@ export default function ContactPage() {
   const slide = hero?.slides?.[0];
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    const name = s?.companyName || "Av Edu Overseas Consultancy";
-    document.title = `Contact — ${name}`;
-  }, [s]);
+  const name = s?.companyName || "Av Edu Overseas Consultancy";
+  const title = `Contact — ${name}`;
+  const desc = "Get in touch with Av Edu Overseas Consultancy. Contact our team for personalized overseas education and immigration guidance.";
+  const lbSchema = localBusinessSchema(s);
+  useSEO({
+    title,
+    description: desc,
+    canonicalPath: "/contact",
+    jsonLd: [
+      organizationSchema(s),
+      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/contact"),
+      ...(lbSchema ? [lbSchema] : []),
+    ],
+  });
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -1,6 +1,7 @@
 import { useLoaderData } from "react-router-dom";
-import { useEffect } from "react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
+import { useSEO } from "@/lib/useSEO";
+import { organizationSchema, webpageSchema } from "@/lib/seo";
 import {
   getPrivacyPolicy,
   getSiteSettingsShared,
@@ -17,10 +18,18 @@ export default function PrivacyPolicyPage() {
     hero: HeroSection | undefined;
   };
 
-  useEffect(() => {
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    document.title = data?.metaTitle || `Privacy Policy — ${name}`;
-  }, [data, siteSettings]);
+  const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+  const title = data?.metaTitle || `Privacy Policy — ${name}`;
+  const desc = data?.metaDescription || "Privacy Policy for Av Edu Overseas Consultancy. Learn how we collect, use, and protect your personal information.";
+  useSEO({
+    title,
+    description: desc,
+    canonicalPath: "/privacy-policy",
+    jsonLd: [
+      organizationSchema(siteSettings),
+      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/privacy-policy"),
+    ],
+  });
 
   if (!data) return null;
 

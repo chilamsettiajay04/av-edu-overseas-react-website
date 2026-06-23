@@ -1,7 +1,8 @@
 import { useLoaderData } from "react-router-dom";
-import { useEffect } from "react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
 import { DestinationCard } from "./index";
+import { useSEO } from "@/lib/useSEO";
+import { organizationSchema, webpageSchema, breadcrumbSchema } from "@/lib/seo";
 import {
   getDestinations,
   getSiteSettingsShared,
@@ -19,10 +20,23 @@ export default function DestinationsPage() {
   };
   const slide = hero?.slides?.[0];
 
-  useEffect(() => {
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    document.title = `Study Abroad Destinations — ${name}`;
-  }, [siteSettings]);
+  const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+  const title = `Study Abroad Destinations — ${name}`;
+  const desc =
+    "Explore 25+ study abroad destinations. Find your perfect country for overseas education with expert guidance from Av Edu.";
+  useSEO({
+    title,
+    description: desc,
+    canonicalPath: "/destinations",
+    jsonLd: [
+      organizationSchema(siteSettings),
+      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/destinations"),
+      breadcrumbSchema([
+        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
+        { name: "Destinations", url: "https://rad-architecture-showcase.vercel.app/destinations" },
+      ]),
+    ],
+  });
 
   return (
     <SiteLayout>

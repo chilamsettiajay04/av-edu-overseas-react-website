@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { Link, useLoaderData, useRouteError, isRouteErrorResponse } from "react-router-dom";
+import { useRef, useState } from "react";
+import { Link, useLoaderData, useParams, useRouteError, isRouteErrorResponse } from "react-router-dom";
 import { SiteLayout, Reveal } from "@/components/site/SiteLayout";
 import { Globe } from "lucide-react";
+import { useSEO } from "@/lib/useSEO";
+import { organizationSchema, webpageSchema, breadcrumbSchema, destinationSchema } from "@/lib/seo";
 import {
   getDestinationBySlug,
   getSiteSettingsShared,
@@ -15,10 +17,25 @@ export default function DestinationDetailPage() {
     siteSettings: SiteSettings | null;
   };
 
-  useEffect(() => {
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    document.title = `${dest.name} — Study Abroad with ${name}`;
-  }, [dest, siteSettings]);
+  const { slug } = useParams();
+  const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+  const title = `${dest.name} — Study Abroad with ${name}`;
+  const desc = dest.tagline;
+  useSEO({
+    title,
+    description: desc,
+    canonicalPath: `/destinations/${slug}`,
+    jsonLd: [
+      organizationSchema(siteSettings),
+      webpageSchema(title, desc, `https://rad-architecture-showcase.vercel.app/destinations/${slug}`),
+      breadcrumbSchema([
+        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
+        { name: "Destinations", url: "https://rad-architecture-showcase.vercel.app/destinations" },
+        { name: dest.name, url: `https://rad-architecture-showcase.vercel.app/destinations/${slug}` },
+      ]),
+      destinationSchema(dest, siteSettings),
+    ],
+  });
 
   const stats = [
     { label: dest.statTuitionLabel || "Tuition / Year", value: dest.costOfStudyShort },

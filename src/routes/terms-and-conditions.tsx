@@ -1,6 +1,7 @@
 import { useLoaderData } from "react-router-dom";
-import { useEffect } from "react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
+import { useSEO } from "@/lib/useSEO";
+import { organizationSchema, webpageSchema } from "@/lib/seo";
 import {
   getTermsConditions,
   getSiteSettingsShared,
@@ -17,10 +18,18 @@ export default function TermsPage() {
     hero: HeroSection | undefined;
   };
 
-  useEffect(() => {
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    document.title = data?.metaTitle || `Terms & Conditions — ${name}`;
-  }, [data, siteSettings]);
+  const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+  const title = data?.metaTitle || `Terms & Conditions — ${name}`;
+  const desc = data?.metaDescription || "Terms and Conditions governing your use of Av Edu Overseas Consultancy's website and services.";
+  useSEO({
+    title,
+    description: desc,
+    canonicalPath: "/terms-and-conditions",
+    jsonLd: [
+      organizationSchema(siteSettings),
+      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/terms-and-conditions"),
+    ],
+  });
 
   if (!data) return null;
 

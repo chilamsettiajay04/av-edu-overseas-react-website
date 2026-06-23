@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { SiteLayout, Reveal } from "@/components/site/SiteLayout";
 import { useSiteSettings } from "@/lib/SiteSettingsContext";
+import { useSEO } from "@/lib/useSEO";
+import { organizationSchema, webpageSchema, faqSchema } from "@/lib/seo";
 import {
   Accordion,
   AccordionItem,
@@ -79,10 +81,18 @@ export default function HomePage() {
   const s = siteSettings;
   const name = s?.companyName || "Av Edu Overseas Consultancy";
   const seoTitle = s?.seoTitle || `${name} — Your Gateway to Global Opportunities`;
-
-  useEffect(() => {
-    document.title = seoTitle;
-  }, [seoTitle]);
+  const seoDesc = s?.seoDescription || "Your trusted partner for overseas education and immigration consultancy. Expert guidance for students and professionals seeking global opportunities.";
+  useSEO({
+    title: seoTitle,
+    description: seoDesc,
+    ogImage: s?.seoOgImage,
+    canonicalPath: "/",
+    jsonLd: [
+      organizationSchema(s),
+      webpageSchema(seoTitle, seoDesc, "https://rad-architecture-showcase.vercel.app/"),
+      ...(faqs.length > 0 ? [faqSchema(faqs)] : []),
+    ],
+  });
 
   return (
     <SiteLayout>
@@ -378,7 +388,7 @@ function FeaturedServices({ services }: { services: ServiceData[] }) {
             What We Offer
           </p>
           <h2 className="mt-4 accent-underline text-3xl font-semibold text-foreground sm:text-4xl md:text-5xl">
-              Our Areas of experties
+              Our Areas of Expertise
           </h2>
         </Reveal>
 

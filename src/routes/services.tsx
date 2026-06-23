@@ -1,5 +1,4 @@
 import { useLoaderData } from "react-router-dom";
-import { useEffect } from "react";
 import {
   GraduationCap,
   FileCheck,
@@ -10,6 +9,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
+import { useSEO } from "@/lib/useSEO";
+import { organizationSchema, webpageSchema, breadcrumbSchema } from "@/lib/seo";
 import {
   getServices,
   getSiteSettingsShared,
@@ -57,10 +58,23 @@ export default function ServicesPage() {
   };
   const slide = hero?.slides?.[0];
 
-  useEffect(() => {
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    document.title = `Our Services — ${name}`;
-  }, [siteSettings]);
+  const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+  const title = `Our Services — ${name}`;
+  const desc =
+    "Comprehensive overseas education and immigration services. From university selection to visa assistance, we guide you at every stage.";
+  useSEO({
+    title,
+    description: desc,
+    canonicalPath: "/services",
+    jsonLd: [
+      organizationSchema(siteSettings),
+      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/services"),
+      breadcrumbSchema([
+        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
+        { name: "Services", url: "https://rad-architecture-showcase.vercel.app/services" },
+      ]),
+    ],
+  });
 
   return (
     <SiteLayout>

@@ -1,7 +1,8 @@
 import { useLoaderData } from "react-router-dom";
-import { useEffect } from "react";
 import { Star } from "lucide-react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
+import { useSEO } from "@/lib/useSEO";
+import { organizationSchema, webpageSchema, breadcrumbSchema } from "@/lib/seo";
 import {
   getTestimonials,
   getSiteSettingsShared,
@@ -19,10 +20,23 @@ export default function TestimonialsPage() {
   };
   const slide = hero?.slides?.[0];
 
-  useEffect(() => {
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    document.title = `Student Success Stories — ${name}`;
-  }, [siteSettings]);
+  const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+  const title = `Student Success Stories — ${name}`;
+  const desc =
+    "Read inspiring success stories from students who achieved their study abroad dreams with Av Edu Overseas Consultancy.";
+  useSEO({
+    title,
+    description: desc,
+    canonicalPath: "/testimonials",
+    jsonLd: [
+      organizationSchema(siteSettings),
+      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/testimonials"),
+      breadcrumbSchema([
+        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
+        { name: "Testimonials", url: "https://rad-architecture-showcase.vercel.app/testimonials" },
+      ]),
+    ],
+  });
 
   return (
     <SiteLayout>

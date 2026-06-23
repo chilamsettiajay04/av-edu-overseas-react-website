@@ -1,7 +1,8 @@
 import { useLoaderData } from "react-router-dom";
-import { useEffect } from "react";
 import { SiteLayout, PageHero, Reveal } from "@/components/site/SiteLayout";
 import { useSiteSettings } from "@/lib/SiteSettingsContext";
+import { useSEO } from "@/lib/useSEO";
+import { organizationSchema, webpageSchema, breadcrumbSchema } from "@/lib/seo";
 import {
   getSiteSettingsShared,
   getHeroSections,
@@ -18,10 +19,24 @@ export default function AboutPage() {
   const aboutParagraphs = [s?.aboutDescription, s?.aboutDescription2].filter(Boolean) as string[];
   const slide = hero?.slides?.[0];
 
-  useEffect(() => {
-    const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
-    document.title = `About Us — ${name}`;
-  }, [siteSettings]);
+  const name = siteSettings?.companyName || "Av Edu Overseas Consultancy";
+  const title = `About Us — ${name}`;
+  const desc =
+    siteSettings?.aboutDescription ||
+    "Learn about Av Edu Overseas Consultancy — our story, our team, and our mission to help students achieve their global education dreams.";
+  useSEO({
+    title,
+    description: desc,
+    canonicalPath: "/about",
+    jsonLd: [
+      organizationSchema(siteSettings),
+      webpageSchema(title, desc, "https://rad-architecture-showcase.vercel.app/about"),
+      breadcrumbSchema([
+        { name: "Home", url: "https://rad-architecture-showcase.vercel.app/" },
+        { name: "About Us", url: "https://rad-architecture-showcase.vercel.app/about" },
+      ]),
+    ],
+  });
 
   return (
     <SiteLayout>
