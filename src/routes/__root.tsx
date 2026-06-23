@@ -21,6 +21,9 @@ export function RootLayout() {
     const s = siteSettings;
     const name = s?.companyName || "Av Edu Overseas Consultancy";
     document.title = s?.seoTitle || `${name} — Your Gateway to Global Education & Immigration`;
+    const favicon = s?.companyShortLogoLight || s?.companyShortLogoDark || "/companyShortLogoLight.png";
+    const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (link) link.href = favicon;
   }, [siteSettings]);
 
   return (

@@ -1,6 +1,6 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { JSX, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Phone, Mail, Menu, X, MapPin, Clock } from "lucide-react";
+import { Phone, Mail, Menu, X, MapPin, Clock, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { useSiteSettings } from "@/lib/SiteSettingsContext";
@@ -23,6 +23,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <TopBar />
       <MainNav />
       {children}
+      <ScrollToTop />
       <Footer />
     </div>
   );
@@ -31,23 +32,27 @@ export function SiteLayout({ children }: { children: ReactNode }) {
 function TopBar() {
   const s = useSiteSettings();
   return (
-    <div className="hidden h-10 border-b border-primary/20 bg-primary text-xs text-primary-foreground md:block">
-      <div className="mx-auto flex h-full max-w-full px-10 md:px-16 items-center justify-between">
-        <div className="flex items-center gap-6">
+    <div className="h-10 border-b border-primary/20 bg-primary text-xs text-primary-foreground">
+      <div className="mx-auto flex h-full max-w-full items-center justify-between px-4 md:px-16">
+        <div className="flex items-center gap-4 md:gap-6">
           <a
             href={`tel:${s?.primaryPhone?.replace(/\s/g, "") || "+13056434771"}`}
-            className="text-sm flex items-center gap-2 transition-colors hover:text-white/80"
+            className="text-xs md:text-sm flex items-center gap-1 md:gap-2 transition-colors hover:text-white/80"
           >
-            <Phone className="h-4 w-4" /> {s?.primaryPhone || "+1.305.643.4771"}
+            <Phone className="h-3 w-3 md:h-4 md:w-4" />{" "}
+            <span>{s?.primaryPhone || "+1.305.643.4771"}</span>
           </a>
           <a
             href={`mailto:${s?.primaryEmail || "info@radoverseas.com"}`}
-            className="text-sm flex items-center gap-2 transition-colors hover:text-white/80"
+            className="text-xs md:text-sm flex items-center gap-1 md:gap-2 transition-colors hover:text-white/80"
           >
-            <Mail className="h-4 w-4" /> {s?.primaryEmail || "info@radoverseas.com"}
+            <Mail className="h-3 w-3 md:h-4 md:w-4" />{" "}
+            <span>{s?.primaryEmail || "info@radoverseas.com"}</span>
           </a>
         </div>
-        <SocialIcons size={18} />
+        <div className="hidden md:block">
+          <SocialIcons size={18} />
+        </div>
       </div>
     </div>
   );
@@ -224,16 +229,16 @@ function MainNav() {
     <header
       className={`${
         isHome ? "fixed" : "sticky"
-      } top-0 z-50 w-full h-16 transition-[color,box-shadow] duration-500 ${
+      } top-0 z-50 w-full h-16 transition-[color,box-shadow,background-color] duration-500 ${
         transparent
-          ? "bg-transparent top-6 md:top-14"
+          ? open ? "bg-white top-10" : "bg-transparent top-14"
           : scrolled
             ? "bg-white/95 shadow-sm backdrop-blur-md"
             : "bg-white/90 backdrop-blur-sm"
       }`}
     >
       <div className="mx-auto flex h-full max-w-full px-10 md:px-16 items-center justify-between">
-        <Logo tone={transparent ? "light" : "dark"} />
+        <Logo tone={transparent && !open ? "light" : "dark"} />
         <nav className="hidden items-center gap-8 lg:flex">
           {NAV.map((item) => (
             <NavLink
@@ -242,7 +247,7 @@ function MainNav() {
               end={item.to === "/"}
               className={({ isActive }) =>
                 `text-[11px] uppercase tracking-[0.22em] transition-colors hover:text-primary ${
-                  transparent ? "text-white/80" : "text-foreground/80"
+                  transparent && !open ? "text-white/80" : "text-foreground/80"
                 } ${isActive ? "text-primary" : ""}`
               }
             >
@@ -256,7 +261,7 @@ function MainNav() {
             setOpen((v) => !v);
             if (!open) window.scrollTo({ top: 0, behavior: "smooth" });
           }}
-          className={`lg:hidden transition-colors ${transparent ? "text-white" : "text-foreground"}`}
+          className={`lg:hidden transition-colors ${transparent && !open ? "text-white" : "text-foreground"}`}
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -265,14 +270,19 @@ function MainNav() {
         <div className="border-t border-border bg-white lg:hidden">
           <nav className="flex flex-col px-6 py-4">
             {NAV.map((item) => (
-              <Link
+              <NavLink
                 key={item.to}
                 to={item.to}
-                className="py-3 text-xs uppercase tracking-[0.22em] text-foreground/80 transition-colors hover:text-primary"
+                end={item.to === "/"}
+                className={({ isActive }) =>
+                  `py-3 text-xs uppercase tracking-[0.22em] transition-colors hover:text-primary ${
+                    isActive ? "text-primary font-semibold" : "text-foreground/80"
+                  }`
+                }
                 onClick={() => setOpen(false)}
               >
                 {item.label}
-              </Link>
+              </NavLink>
             ))}
           </nav>
         </div>
@@ -284,17 +294,12 @@ function MainNav() {
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const s = useSiteSettings();
   const logoSrc =
-    tone === "light" ? s?.companyLogoLight || "/logo-light.png" : s?.companyLogoDark || "/logo.png";
+    tone === "light" ? s?.companyLogoLight || "/companyLogoLight.png" : s?.companyLogoDark || "/companyLogoDark.png";
   const name = s?.companyName || "Av Edu Overseas Consultancy";
-  const tagline = s?.logoTagline || "Overseas Consultancy";
+  // const tagline = s?.logoTagline || "Overseas Consultancy";
   return (
     <Link to="/" className="flex flex-col leading-none items-start">
-      <img src={logoSrc} alt={name} className="h-5 w-auto object-contain" />
-      <span
-        className={`mt-1 text-[9px] uppercase tracking-[0.4em] ${tone === "light" ? "text-white/60" : "text-primary"}`}
-      >
-        {tagline}
-      </span>
+      <img src={logoSrc} alt={name} className="h-14 w-auto object-contain" />
     </Link>
   );
 }
@@ -328,6 +333,28 @@ export function Reveal({ children, className = "" }: { children: ReactNode; clas
     >
       {children}
     </div>
+  );
+}
+
+function ScrollToTop() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 400);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <button
+      aria-label="Scroll to top"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      className={`fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:bg-primary/90 md:hidden ${
+        visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0 pointer-events-none"
+      }`}
+    >
+      <ArrowUp className="h-5 w-5" />
+    </button>
   );
 }
 

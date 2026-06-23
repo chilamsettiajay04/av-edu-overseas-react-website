@@ -13,6 +13,13 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "testimonial_profile_image",
+      title: "Profile Image",
+      type: "image",
+      description: "Upload the student's profile photo.",
+      options: { hotspot: true },
+    }),
+    defineField({
       name: "testimonial_student_country",
       title: "Country Studied In",
       description: "The destination country the student studied in.",
@@ -26,7 +33,7 @@ export default defineType({
       type: "text",
       rows: 4,
       initialValue:
-        "Av Edu Overseas Consultancy made my PR process seamless. From documentation to landing in Toronto — they were with me at every step.",
+        "Av Edu made my PR process seamless. From documentation to landing in Toronto — they were with me at every step.",
       validation: (Rule) => Rule.required(),
     }),
     defineField({

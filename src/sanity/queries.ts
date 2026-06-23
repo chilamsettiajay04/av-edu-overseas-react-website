@@ -120,7 +120,8 @@ const testimonialsQuery = `*[_type == "testimonial"] | order(testimonial_display
   testimonial_student_country,
   testimonial_quote,
   testimonial_rating,
-  testimonial_display_order
+  testimonial_display_order,
+  "testimonial_profile_image": testimonial_profile_image.asset->url
 }`;
 
 export interface ServiceData {
@@ -190,6 +191,7 @@ export interface TestimonialData {
   testimonial_quote: string;
   testimonial_rating: number;
   testimonial_display_order: number;
+  testimonial_profile_image?: string;
 }
 
 export async function getServices(): Promise<ServiceData[]> {
@@ -278,6 +280,8 @@ const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   "companyName": companyName,
   "companyLogoDark": companyLogoDark.asset->url,
   "companyLogoLight": companyLogoLight.asset->url,
+  "companyShortLogoDark": companyShortLogoDark.asset->url,
+  "companyShortLogoLight": companyShortLogoLight.asset->url,
   "logoTagline": logoTagline,
   "companyTagline": companyTagline,
   "footerDescription": footerDescription,
@@ -332,6 +336,8 @@ export interface SiteSettings {
   companyName: string;
   companyLogoDark?: string;
   companyLogoLight?: string;
+  companyShortLogoDark?: string;
+  companyShortLogoLight?: string;
   logoTagline?: string;
   companyTagline?: string;
   footerDescription?: string;

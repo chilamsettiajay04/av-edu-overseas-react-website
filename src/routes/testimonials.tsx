@@ -52,10 +52,27 @@ export default function TestimonialsPage() {
                     "{t.testimonial_quote}"
                   </p>
                   <div className="mt-6 border-t border-border pt-4">
-                    <p className="text-sm font-semibold">{t.testimonial_student_name}</p>
-                    <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-                      {t.testimonial_student_country}
-                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-primary/10">
+                        {t.testimonial_profile_image ? (
+                          <img
+                            src={t.testimonial_profile_image}
+                            alt={t.testimonial_student_name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-primary">
+                            {t.testimonial_student_name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">{t.testimonial_student_name}</p>
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+                          {t.testimonial_student_country}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </Reveal>

@@ -19,7 +19,7 @@ export default defineType({
       name: "companyName",
       title: "Company Name",
       type: "string",
-      initialValue: "Av Edu Overseas Consultancy",
+      initialValue: "Av Edu",
       group: "identity",
       validation: (Rule) => Rule.required(),
     }),
@@ -31,8 +31,22 @@ export default defineType({
       description: "Dark logo variant for light backgrounds.",
     }),
     defineField({
+      name: "companyShortLogoDark",
+      title: "Company Short Logo  (Dark Variant)",
+      type: "image",
+      group: "identity",
+      description: "Dark logo variant for light backgrounds.",
+    }),
+    defineField({
       name: "companyLogoLight",
       title: "Company Logo (Light Variant)",
+      type: "image",
+      group: "identity",
+      description: "Light logo variant for dark backgrounds.",
+    }),
+    defineField({
+      name: "companyShortLogoLight",
+      title: "Company Short Logo (Light Variant)",
       type: "image",
       group: "identity",
       description: "Light logo variant for dark backgrounds.",
@@ -66,7 +80,7 @@ export default defineType({
       name: "copyrightText",
       title: "Copyright Text",
       type: "string",
-      initialValue: "© 2024. Av Edu Overseas Consultancy. All rights reserved.",
+      initialValue: "© 2024. Av Edu. All rights reserved.",
       group: "footer",
     }),
 
@@ -112,10 +126,10 @@ export default defineType({
         },
       ],
       initialValue: [
-        { platform: "twitter", url: "https://x.com/AvEduOverseas", handle: "@AvEduOverseas" },
-        { platform: "facebook", url: "https://facebook.com/AvEduOverseas" },
-        { platform: "linkedin", url: "https://linkedin.com/company/avedu-overseas" },
-        { platform: "instagram", url: "https://instagram.com/AvEduOverseas" },
+        { platform: "twitter", url: "https://x.com/AvEdu", handle: "@AvEdu" },
+        { platform: "facebook", url: "https://facebook.com/AvEdu" },
+        { platform: "linkedin", url: "https://linkedin.com/company/avedu" },
+        { platform: "instagram", url: "https://instagram.com/AvEdu" },
       ],
     }),
 
@@ -223,7 +237,7 @@ export default defineType({
       type: "text",
       rows: 5,
       initialValue:
-        "Founded over a decade ago, Av Edu Overseas Consultancy has helped thousands of students and professionals achieve their global ambitions. We combine deep regulatory expertise with personalized counseling, walking with you from your first application to your first day abroad — and beyond. Honesty, transparency, and long-term outcomes define everything we do.",
+        "Founded over a decade ago, Av Edu has helped thousands of students and professionals achieve their global ambitions. We combine deep regulatory expertise with personalized counseling, walking with you from your first application to your first day abroad — and beyond. Honesty, transparency, and long-term outcomes define everything we do.",
       group: "about",
     }),
     defineField({
@@ -289,7 +303,7 @@ export default defineType({
       name: "seoTitle",
       title: "SEO — Default Site Title",
       type: "string",
-      initialValue: "Av Edu Overseas Consultancy — Your Gateway to Global Opportunities",
+      initialValue: "Av Edu — Your Gateway to Global Opportunities",
       group: "seo",
     }),
     defineField({
@@ -298,7 +312,7 @@ export default defineType({
       type: "text",
       rows: 2,
       initialValue:
-        "Av Edu Overseas Consultancy — Your gateway to global education and immigration opportunities. We guide students and professionals through study abroad, visa, and immigration journeys across 25+ countries.",
+        "Av Edu — Your gateway to global education and immigration opportunities. We guide students and professionals through study abroad, visa, and immigration journeys across 25+ countries.",
       group: "seo",
     }),
     defineField({
