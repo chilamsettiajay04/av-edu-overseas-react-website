@@ -57,8 +57,8 @@ export default function DestinationDetailPage() {
     { label: dest.statTuitionLabel || "Tuition / Year", value: dest.costOfStudyShort },
     { label: dest.statLivingCostLabel || "Living Cost", value: dest.costOfLivingShort },
     { label: dest.statRankingLabel || "Global Ranking", value: dest.rankingShort },
-    { label: dest.statWorkRightsLabel || "Work Rights", value: dest.workRightsShort },
     { label: dest.statIntakesLabel || "Intakes", value: dest.intakes?.length ? dest.intakes.join(", ") : "N/A" },
+    { label: dest.statWorkRightsLabel || "Work Rights", value: dest.workRightsShort },
   ];
 
   // Tab state for Universities/Visa/Courses/Scholarships
@@ -91,8 +91,8 @@ export default function DestinationDetailPage() {
           All amounts are shown in {dest.name} currency
         </p>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-px overflow-hidden rounded-xl border border-border bg-border shadow-xl">
-          {stats.map((s) => (
-            <div key={s.label} className="bg-white p-6 md:p-8">
+          {stats.map((s, i) => (
+            <div key={s.label} className={`bg-white p-6 md:p-8 ${i === stats.length - 1 ? "col-span-2 md:col-span-1" : ""}`}>
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                 {s.label}
               </p>

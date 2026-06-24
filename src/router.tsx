@@ -12,12 +12,11 @@ import TermsPage from "./routes/terms-and-conditions";
 
 function PageSkeleton() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <img src="/website_loader.gif" alt="Loading..." className="h-44 w-44" />
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="loader"></div>
     </div>
   );
 }
-
 export const router = createBrowserRouter([
   {
     path: "/",
