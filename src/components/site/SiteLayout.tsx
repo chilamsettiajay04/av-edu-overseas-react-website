@@ -1,4 +1,4 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { JSX, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Phone, Mail, Menu, X, MapPin, Clock, ArrowUp } from "lucide-react";
 import { toast } from "sonner";
@@ -211,34 +211,12 @@ export function SocialIcons({
 }
 
 function MainNav() {
-  const location = useLocation();
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const isHome = location.pathname === "/";
-  const transparent = isHome && !scrolled;
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <header
-      className={`${
-        isHome ? "fixed" : "sticky"
-      } top-0 z-50 w-full h-16 transition-[color,box-shadow,background-color] duration-500 ${
-        transparent
-          ? open ? "bg-white top-10" : "bg-transparent top-14"
-          : scrolled
-            ? "bg-white/95 shadow-sm backdrop-blur-md"
-            : "bg-white/90 backdrop-blur-sm"
-      }`}
-    >
+    <header className="sticky top-0 z-50 w-full h-16 bg-white shadow-sm">
       <div className="mx-auto flex h-full max-w-full px-10 md:px-16 items-center justify-between">
-        <Logo tone={transparent && !open ? "light" : "dark"} />
+        <Logo tone="dark" />
         <nav className="hidden items-center gap-8 lg:flex">
           {NAV.map((item) => (
             <NavLink
@@ -246,9 +224,11 @@ function MainNav() {
               to={item.to}
               end={item.to === "/"}
               className={({ isActive }) =>
-                `text-[11px] uppercase tracking-[0.22em] transition-colors hover:text-primary ${
-                  transparent && !open ? "text-white/80" : "text-foreground/80"
-                } ${isActive ? "text-primary" : ""}`
+                `relative text-[11px] uppercase tracking-[0.22em] transition-colors hover:text-primary ${
+                  isActive
+                    ? "text-primary font-semibold after:absolute after:left-0 after:-bottom-6 after:h-0.5 after:w-full after:bg-primary"
+                    : "text-foreground/80 after:absolute after:left-0 after:-bottom-6 after:h-0.5 after:w-0 after:bg-primary hover:after:w-full after:transition-all"
+                }`
               }
             >
               {item.label}
@@ -257,11 +237,8 @@ function MainNav() {
         </nav>
         <button
           aria-label="Toggle menu"
-          onClick={() => {
-            setOpen((v) => !v);
-            if (!open) window.scrollTo({ top: 0, behavior: "smooth" });
-          }}
-          className={`lg:hidden transition-colors ${transparent && !open ? "text-white" : "text-foreground"}`}
+          onClick={() => setOpen((v) => !v)}
+          className="lg:hidden text-foreground"
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -294,12 +271,14 @@ function MainNav() {
 export function Logo({ tone = "dark" }: { tone?: "dark" | "light" }) {
   const s = useSiteSettings();
   const logoSrc =
-    tone === "light" ? s?.companyLogoLight || "/companyLogoLight.png" : s?.companyLogoDark || "/companyLogoDark.png";
+    tone === "light"
+      ? s?.companyLogoLight || "/companyLogoLight.png"
+      : s?.companyLogoDark || "/companyLogoDark.png";
   const name = s?.companyName || "Av Edu Overseas Consultancy";
   // const tagline = s?.logoTagline || "Overseas Consultancy";
   return (
     <Link to="/" className="flex flex-col leading-none items-start">
-      <img src={logoSrc} alt={name} className="h-14 w-auto object-contain" />
+      <img src={logoSrc} alt={name} className="h-12 w-auto object-contain" />
     </Link>
   );
 }

@@ -7,13 +7,6 @@ export default defineType({
   fields: [
     // ── Identity ──
     defineField({
-      name: "destination_sort_order",
-      title: "Sort Order",
-      description: "Lower numbers appear first.",
-      type: "number",
-      initialValue: 1,
-    }),
-    defineField({
       name: "destination_name",
       title: "Country Name",
       description: 'Display name e.g. "United Kingdom", "Canada".',
@@ -115,6 +108,27 @@ export default defineType({
       type: "string",
       initialValue: "2 Year Post-Grad",
     }),
+    defineField({
+      name: "destination_intakes",
+      title: "Intakes",
+      description: 'Available intake periods e.g. "September", "January", "May".',
+      type: "array",
+      of: [{ type: "string" }],
+      initialValue: ["September", "January"],
+    }),
+    defineField({
+      name: "destination_scholarships_eligibility_criteria",
+      title: "Scholarships Eligibility Criteria",
+      description: "Bullet-point list of eligibility requirements for scholarships.",
+      type: "array",
+      of: [{ type: "string" }],
+      initialValue: [
+        "Minimum 60% in previous degree",
+        "IELTS score of 6.5 or above (or equivalent)",
+        "Strong academic record and extracurricular achievements",
+        "Demonstrated financial need (for need-based scholarships)",
+      ],
+    }),
 
     // ── Highlights ──
     defineField({
@@ -153,6 +167,7 @@ export default defineType({
       type: "url",
       description: "Optional background image for the fun fact section.",
     }),
+
     // ── Universities ──
     defineField({
       name: "destination_universities",
@@ -252,6 +267,117 @@ export default defineType({
       ],
     }),
 
+    // ── Courses ──
+    defineField({
+      name: "destination_courses",
+      title: "Courses / Programs",
+      description: "Available courses and programs offered in this destination.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "course_name",
+              title: "Course Name",
+              type: "string",
+              initialValue: "MBA in Business Analytics",
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: "course_university",
+              title: "University",
+              type: "string",
+              initialValue: "University of Birmingham",
+            }),
+            defineField({
+              name: "course_level",
+              title: "Level",
+              description: 'e.g. "Bachelor", "Master", "PhD", "Diploma".',
+              type: "string",
+              initialValue: "Master",
+            }),
+            defineField({
+              name: "course_duration",
+              title: "Duration",
+              description: 'e.g. "1 Year", "3 Years", "4 Years".',
+              type: "string",
+              initialValue: "1 Year",
+            }),
+            defineField({
+              name: "course_fees",
+              title: "Tuition Fees",
+              description: 'e.g. "£25,000", "£15,000 – £30,000".',
+              type: "string",
+              initialValue: "£25,000",
+            }),
+            defineField({
+              name: "course_description",
+              title: "Short Description",
+              type: "text",
+              initialValue:
+                "A comprehensive program covering data-driven decision making and business strategy.",
+            }),
+          ],
+        },
+      ],
+      initialValue: [
+        {
+          course_name: "MBA in Business Analytics",
+          course_university: "University of Birmingham",
+          course_level: "Master",
+          course_duration: "1 Year",
+          course_fees: "£28,000",
+          course_description:
+            "A comprehensive program covering data-driven decision making and business strategy.",
+        },
+        {
+          course_name: "BSc Computer Science",
+          course_university: "University of Birmingham",
+          course_level: "Bachelor",
+          course_duration: "3 Years",
+          course_fees: "£22,350",
+          course_description:
+            "A rigorous program covering algorithms, AI, and software engineering.",
+        },
+        {
+          course_name: "MSc Data Science",
+          course_university: "Coventry University",
+          course_level: "Master",
+          course_duration: "1 Year",
+          course_fees: "£19,800",
+          course_description:
+            "Learn to extract insights from complex data using machine learning and statistical methods.",
+        },
+        {
+          course_name: "LLB Law",
+          course_university: "University of Law",
+          course_level: "Bachelor",
+          course_duration: "3 Years",
+          course_fees: "£14,500",
+          course_description: "A qualifying law degree with strong links to the legal profession.",
+        },
+        {
+          course_name: "MA Fashion Marketing",
+          course_university: "Middlesex University",
+          course_level: "Master",
+          course_duration: "1 Year",
+          course_fees: "£16,800",
+          course_description:
+            "Develop strategic marketing skills tailored for the global fashion industry.",
+        },
+        {
+          course_name: "MSc Civil Engineering",
+          course_university: "University of Leeds",
+          course_level: "Master",
+          course_duration: "1 Year",
+          course_fees: "£26,500",
+          course_description:
+            "Advanced study in structural, geotechnical, and transport engineering.",
+        },
+      ],
+    }),
+
     // ── Detail Page Labels ──
     defineField({
       name: "detail_page_stat_tuition_label",
@@ -276,6 +402,12 @@ export default defineType({
       title: 'Stat Label — "Work Rights"',
       type: "string",
       initialValue: "Work Rights",
+    }),
+    defineField({
+      name: "detail_page_stat_intakes_label",
+      title: 'Stat Label — "Intakes"',
+      type: "string",
+      initialValue: "Intakes",
     }),
     defineField({
       name: "detail_page_overview_section_label",

@@ -88,10 +88,19 @@ const destinationDetailQuery = `*[_type == "destination" && destination_slug.cur
     "name": visa_option_name,
     "description": visa_option_description
   },
+  "courses": destination_courses[]{
+    "name": course_name,
+    "university": course_university,
+    "level": course_level,
+    "duration": course_duration,
+    "fees": course_fees,
+    "description": course_description
+  },
   "statTuitionLabel": detail_page_stat_tuition_label,
   "statLivingCostLabel": detail_page_stat_living_cost_label,
   "statRankingLabel": detail_page_stat_ranking_label,
   "statWorkRightsLabel": detail_page_stat_work_rights_label,
+  "statIntakesLabel": detail_page_stat_intakes_label,
   "overviewSectionLabel": detail_page_overview_section_label,
   "keyHighlightsHeading": detail_page_key_highlights_heading,
   "academicsLabel": detail_page_academics_immigration_label,
@@ -102,7 +111,9 @@ const destinationDetailQuery = `*[_type == "destination" && destination_slug.cur
   "ctaHeadingTemplate": detail_page_cta_heading_template,
   "ctaDescriptionTemplate": detail_page_cta_description_template,
   "ctaButtonText": detail_page_cta_button_text,
-  "browseAllButtonText": detail_page_browse_all_button_text
+  "browseAllButtonText": detail_page_browse_all_button_text,
+  "intakes": destination_intakes,
+  "scholarships": destination_scholarships_eligibility_criteria
 }`;
 
 const statsQuery = `*[_type == "stat"] | order(stat_sort_order asc) {
@@ -154,6 +165,7 @@ export interface DestInfo {
   workRightsShort: string;
   universities: { name: string; badge: string }[];
   visaOptions: { name: string; description: string }[];
+  courses: { name: string; university: string; level: string; duration: string; fees: string; description: string }[];
   highlights: string[];
   funFact: string;
   funFactLabel: string;
@@ -162,6 +174,7 @@ export interface DestInfo {
   statLivingCostLabel?: string;
   statRankingLabel?: string;
   statWorkRightsLabel?: string;
+  statIntakesLabel?: string;
   overviewSectionLabel?: string;
   keyHighlightsHeading?: string;
   academicsLabel?: string;
@@ -173,6 +186,8 @@ export interface DestInfo {
   ctaDescriptionTemplate?: string;
   ctaButtonText?: string;
   browseAllButtonText?: string;
+  intakes?: string[];
+  scholarships?: string[];
 }
 
 export interface StatData {

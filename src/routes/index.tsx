@@ -193,7 +193,7 @@ function Hero({ slides }: { slides: { image: string; heading?: string; subtitle?
     <section
       ref={sectionRef}
       tabIndex={0}
-      className="relative w-full overflow-hidden bg-black min-h-[max(480px,100dvh)] md:min-h-[max(480px,calc(100dvh-40px))] outline-none"
+      className="relative w-full overflow-hidden bg-black min-h-[max(480px,calc(100dvh-64px))] md:min-h-[max(480px,calc(100dvh-104px))] outline-none"
     >
       {slides.map((slide, i) => (
         <div

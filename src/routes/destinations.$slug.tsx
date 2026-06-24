@@ -58,10 +58,11 @@ export default function DestinationDetailPage() {
     { label: dest.statLivingCostLabel || "Living Cost", value: dest.costOfLivingShort },
     { label: dest.statRankingLabel || "Global Ranking", value: dest.rankingShort },
     { label: dest.statWorkRightsLabel || "Work Rights", value: dest.workRightsShort },
+    { label: dest.statIntakesLabel || "Intakes", value: dest.intakes?.length ? dest.intakes.join(", ") : "N/A" },
   ];
 
-  // Tab state for Universities/Visa
-  const [activeTab, setActiveTab] = useState<"universities" | "visa">("universities");
+  // Tab state for Universities/Visa/Courses/Scholarships
+  const [activeTab, setActiveTab] = useState<"universities" | "visa" | "courses" | "scholarships">("universities");
 
   return (
     <SiteLayout>
@@ -89,7 +90,7 @@ export default function DestinationDetailPage() {
         <p className="text-[12px] text-white/70 mb-4 text-center">
           All amounts are shown in {dest.name} currency
         </p>
-        <div className=" grid grid-cols-2 md:grid-cols-4 gap-px overflow-hidden rounded-xl border border-border bg-border shadow-xl">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-px overflow-hidden rounded-xl border border-border bg-border shadow-xl">
           {stats.map((s) => (
             <div key={s.label} className="bg-white p-6 md:p-8">
               <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -173,10 +174,10 @@ export default function DestinationDetailPage() {
 
           {/* Toggle Buttons */}
           <div className="flex justify-center mb-12">
-            <div className="inline-flex rounded-md shadow-sm" role="group">
+            <div className="grid grid-cols-2 md:flex rounded-md shadow-sm" role="group">
               <button
                 onClick={() => setActiveTab("universities")}
-                className={`px-6 py-3 text-sm font-medium rounded-l-lg transition-all ${
+                className={`px-6 py-3 text-sm font-medium transition-all md:rounded-l-lg ${
                   activeTab === "universities"
                     ? "bg-primary text-primary-foreground"
                     : "bg-white text-gray-700 hover:bg-gray-50"
@@ -185,8 +186,18 @@ export default function DestinationDetailPage() {
                 Universities
               </button>
               <button
+                onClick={() => setActiveTab("courses")}
+                className={`px-6 py-3 text-sm font-medium transition-all ${
+                  activeTab === "courses"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                } border border-gray-200`}
+              >
+                Courses
+              </button>
+              <button
                 onClick={() => setActiveTab("visa")}
-                className={`px-6 py-3 text-sm font-medium rounded-r-lg transition-all ${
+                className={`px-6 py-3 text-sm font-medium transition-all ${
                   activeTab === "visa"
                     ? "bg-primary text-primary-foreground"
                     : "bg-white text-gray-700 hover:bg-gray-50"
@@ -194,11 +205,27 @@ export default function DestinationDetailPage() {
               >
                 Visa Options
               </button>
+              <button
+                onClick={() => setActiveTab("scholarships")}
+                className={`px-6 py-3 text-sm font-medium transition-all md:rounded-r-lg ${
+                  activeTab === "scholarships"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                } border border-gray-200`}
+              >
+                Scholarships
+              </button>
             </div>
           </div>
 
           {/* Universities Grid */}
           {activeTab === "universities" && (
+            <div>
+              {(!dest.universities || dest.universities.length === 0) ? (
+                <p className="text-center text-muted-foreground py-12">
+                  No universities listed for {dest.name} yet.
+                </p>
+              ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
               {[...dest.universities]
                 .sort((a, b) => a.name.localeCompare(b.name))
@@ -220,13 +247,56 @@ export default function DestinationDetailPage() {
                       </div>
                       <h3 className="font-semibold text-gray-900 pr-2">{u.name}</h3>
                     </div>
+                </div>
+              ))}
+            </div>
+              )}
+            </div>
+          )}
+
+          {/* Courses Grid */}
+          {activeTab === "courses" && (
+            <div>
+              {(!dest.courses || dest.courses.length === 0) ? (
+                <p className="text-center text-muted-foreground py-12">
+                  No courses available for {dest.name} at the moment.
+                </p>
+              ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
+              {dest.courses.map((c) => (
+                <div
+                  key={c.name + c.university}
+                  className="bg-white rounded-xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                >
+                  <div className="mb-3">
+                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                      {c.level}
+                    </span>
                   </div>
-                ))}
+                  <h3 className="font-bold text-gray-900">{c.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">{c.university}</p>
+                  <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                    <span>Duration: {c.duration}</span>
+                    <span className="text-primary font-semibold">Fees: {c.fees}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-3 leading-relaxed flex-1">
+                    {c.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+              )}
             </div>
           )}
 
           {/* Visa Options Grid */}
           {activeTab === "visa" && (
+            <div>
+              {(!dest.visaOptions || dest.visaOptions.length === 0) ? (
+                <p className="text-center text-muted-foreground py-12">
+                  No visa options listed for {dest.name} yet.
+                </p>
+              ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
               {dest.visaOptions.map((v) => (
                 <div
@@ -239,6 +309,37 @@ export default function DestinationDetailPage() {
                   </p>
                 </div>
               ))}
+            </div>
+              )}
+            </div>
+          )}
+
+          {/* Scholarships Grid */}
+          {activeTab === "scholarships" && (
+            <div>
+              {(!dest.scholarships || dest.scholarships.length === 0) ? (
+                <p className="text-center text-muted-foreground py-12">
+                  No scholarship information available for {dest.name} yet.
+                </p>
+              ) : (
+                <div className="max-w-3xl mx-auto">
+                  <div className="bg-white rounded-xl border border-border p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                      Eligibility Criteria
+                    </h3>
+                    <ul className="space-y-3">
+                      {dest.scholarships.map((criteria, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                            {index + 1}
+                          </span>
+                          <span className="text-gray-700 leading-relaxed">{criteria}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

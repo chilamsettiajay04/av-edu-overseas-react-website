@@ -1,6 +1,6 @@
 const SECRET = "AvEdu@2024#2026";
 const APP_URL =
-  "https://script.google.com/macros/s/AKfycbz45wnfFWZJRU-Yg9THPzZpompbvEb3ho4F5R7GUNT0UI9gkREZFKRQPBEm1Ts31L0leA/exec";
+  "https://script.google.com/macros/s/AKfycbyLUlV95k81h5o_hW44Be1JNV6bgHKhQVxU4WgyBukNDrSD0J_h0Abj6ou7PdgoGjip/exec";
 
 export async function submitToSheet(data: Record<string, string>): Promise<void> {
   const payload = JSON.stringify({
