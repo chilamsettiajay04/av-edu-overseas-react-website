@@ -263,25 +263,15 @@ export default function DestinationDetailPage() {
                 </p>
               ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
-              {dest.courses.map((c) => (
+              {dest.courses.map((c, i) => (
                 <div
-                  key={c.name + c.university}
-                  className="bg-white rounded-xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow flex flex-col"
+                  key={c.name + c.level + i}
+                  className="bg-white rounded-xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between"
                 >
-                  <div className="mb-3">
-                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                      {c.level}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-gray-900">{c.name}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{c.university}</p>
-                  <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
-                    <span>Duration: {c.duration}</span>
-                    <span className="text-primary font-semibold">Fees: {c.fees}</span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-3 leading-relaxed flex-1">
-                    {c.description}
-                  </p>
+                  <h3 className="font-semibold text-gray-900">{c.name}</h3>
+                  <span className="shrink-0 inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                    {c.level}
+                  </span>
                 </div>
               ))}
             </div>

@@ -285,96 +285,22 @@ export default defineType({
               validation: (Rule) => Rule.required(),
             }),
             defineField({
-              name: "course_university",
-              title: "University",
-              type: "string",
-              initialValue: "University of Birmingham",
-            }),
-            defineField({
               name: "course_level",
               title: "Level",
               description: 'e.g. "Bachelor", "Master", "PhD", "Diploma".',
               type: "string",
               initialValue: "Master",
             }),
-            defineField({
-              name: "course_duration",
-              title: "Duration",
-              description: 'e.g. "1 Year", "3 Years", "4 Years".',
-              type: "string",
-              initialValue: "1 Year",
-            }),
-            defineField({
-              name: "course_fees",
-              title: "Tuition Fees",
-              description: 'e.g. "£25,000", "£15,000 – £30,000".',
-              type: "string",
-              initialValue: "£25,000",
-            }),
-            defineField({
-              name: "course_description",
-              title: "Short Description",
-              type: "text",
-              initialValue:
-                "A comprehensive program covering data-driven decision making and business strategy.",
-            }),
           ],
         },
       ],
       initialValue: [
-        {
-          course_name: "MBA in Business Analytics",
-          course_university: "University of Birmingham",
-          course_level: "Master",
-          course_duration: "1 Year",
-          course_fees: "£28,000",
-          course_description:
-            "A comprehensive program covering data-driven decision making and business strategy.",
-        },
-        {
-          course_name: "BSc Computer Science",
-          course_university: "University of Birmingham",
-          course_level: "Bachelor",
-          course_duration: "3 Years",
-          course_fees: "£22,350",
-          course_description:
-            "A rigorous program covering algorithms, AI, and software engineering.",
-        },
-        {
-          course_name: "MSc Data Science",
-          course_university: "Coventry University",
-          course_level: "Master",
-          course_duration: "1 Year",
-          course_fees: "£19,800",
-          course_description:
-            "Learn to extract insights from complex data using machine learning and statistical methods.",
-        },
-        {
-          course_name: "LLB Law",
-          course_university: "University of Law",
-          course_level: "Bachelor",
-          course_duration: "3 Years",
-          course_fees: "£14,500",
-          course_description: "A qualifying law degree with strong links to the legal profession.",
-        },
-        {
-          course_name: "MA Fashion Marketing",
-          course_university: "Middlesex University",
-          course_level: "Master",
-          course_duration: "1 Year",
-          course_fees: "£16,800",
-          course_description:
-            "Develop strategic marketing skills tailored for the global fashion industry.",
-        },
-        {
-          course_name: "MSc Civil Engineering",
-          course_university: "University of Leeds",
-          course_level: "Master",
-          course_duration: "1 Year",
-          course_fees: "£26,500",
-          course_description:
-            "Advanced study in structural, geotechnical, and transport engineering.",
-        },
+        { course_name: "MBA in Business Analytics", course_level: "Master" },
+        { course_name: "BSc Computer Science", course_level: "Bachelor" },
+        { course_name: "MSc Data Science", course_level: "Master" },
+        { course_name: "LLB Law", course_level: "Bachelor" },
+        { course_name: "MA Fashion Marketing", course_level: "Master" },
+        { course_name: "MSc Civil Engineering", course_level: "Master" },
       ],
     }),
 

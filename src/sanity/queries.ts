@@ -90,11 +90,7 @@ const destinationDetailQuery = `*[_type == "destination" && destination_slug.cur
   },
   "courses": destination_courses[]{
     "name": course_name,
-    "university": course_university,
-    "level": course_level,
-    "duration": course_duration,
-    "fees": course_fees,
-    "description": course_description
+    "level": course_level
   },
   "statTuitionLabel": detail_page_stat_tuition_label,
   "statLivingCostLabel": detail_page_stat_living_cost_label,
@@ -165,7 +161,7 @@ export interface DestInfo {
   workRightsShort: string;
   universities: { name: string; badge: string }[];
   visaOptions: { name: string; description: string }[];
-  courses: { name: string; university: string; level: string; duration: string; fees: string; description: string }[];
+  courses: { name: string; level: string }[];
   highlights: string[];
   funFact: string;
   funFactLabel: string;
