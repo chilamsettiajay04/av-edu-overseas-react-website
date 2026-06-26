@@ -12,6 +12,7 @@ export default defineType({
     { name: "offices", title: "Offices" },
     { name: "about", title: "About" },
     { name: "seo", title: "SEO Defaults" },
+    { name: "announcement", title: "Announcement Popup" },
   ],
   fields: [
     // ── Identity ──
@@ -320,6 +321,45 @@ export default defineType({
       title: "SEO — Default Open Graph Image",
       type: "image",
       group: "seo",
+    }),
+
+    // ── Announcement Popup ──
+    defineField({
+      name: "announcementPopupEnabled",
+      title: "Enable Announcement Popup",
+      type: "boolean",
+      initialValue: false,
+      group: "announcement",
+      description: "Show the announcement popup on the home page.",
+    }),
+    defineField({
+      name: "announcementPopupMessage",
+      title: "Message",
+      type: "string",
+      group: "announcement",
+      initialValue: "New intakes open for 2025! Apply now for UK, USA, Canada, Australia & Europe.",
+    }),
+    defineField({
+      name: "announcementPopupImage",
+      title: "Header Background Image URL",
+      type: "url",
+      group: "announcement",
+      description: "URL for the background image in the blue header area of the popup.",
+    }),
+    defineField({
+      name: "announcementPopupCtaText",
+      title: "CTA Button Text",
+      type: "string",
+      group: "announcement",
+      initialValue: "Contact Us Now",
+    }),
+    defineField({
+      name: "announcementPopupCtaLink",
+      title: "CTA Button Link",
+      type: "string",
+      group: "announcement",
+      initialValue: "/contact",
+      description: "Internal path or external URL.",
     }),
   ],
 });

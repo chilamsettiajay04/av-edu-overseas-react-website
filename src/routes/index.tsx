@@ -10,6 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { SiteLayout, Reveal } from "@/components/site/SiteLayout";
+import { AnnouncementPopup } from "@/components/site/AnnouncementPopup";
 import { useSiteSettings } from "@/lib/SiteSettingsContext";
 import { useSEO } from "@/lib/useSEO";
 import { organizationSchema, webpageSchema, faqSchema } from "@/lib/seo";
@@ -96,8 +97,30 @@ export default function HomePage() {
     ],
   });
 
+  const popupEnabled = s?.announcementPopupEnabled ?? false;
+  const [popupOpen, setPopupOpen] = useState(false);
+
+  useEffect(() => {
+    if (!popupEnabled) return;
+    const shown = sessionStorage.getItem("announcement-popup-shown");
+    if (shown !== "true") {
+      setPopupOpen(true);
+      sessionStorage.setItem("announcement-popup-shown", "true");
+    }
+  }, [popupEnabled]);
+
   return (
     <SiteLayout>
+      {popupEnabled && (
+        <AnnouncementPopup
+          open={popupOpen}
+          onOpenChange={setPopupOpen}
+          message={s?.announcementPopupMessage || "New intakes open for 2025! Apply now for UK, USA, Canada, Australia & Europe."}
+          ctaText={s?.announcementPopupCtaText || "Contact Us Now"}
+          ctaLink={s?.announcementPopupCtaLink || "/contact"}
+          image={s?.announcementPopupImage || undefined}
+        />
+      )}
       <Hero slides={heroSlides} />
       <Stats stats={stats} />
       <Intro />

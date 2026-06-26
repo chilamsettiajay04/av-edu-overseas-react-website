@@ -103,34 +103,43 @@ export default function DestinationDetailPage() {
       </div>
 
       {/* Overview + Highlights */}
-      <section className="bg-white">
-        <div className="pi-section">
-          <div className="grid gap-6 md:gap-12 md:grid-cols-3">
-            <div className="col-span-2">
-              <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
-                {dest.overviewSectionLabel || "Overview"}
-              </p>
-              <h2 className="mt-2 text-3xl font-bold text-gray-900">{dest.overviewHeading}</h2>
-              <p className="mt-4 text-gray-600 leading-relaxed">{dest.overview}</p>
-            </div>
-            <div>
-              <div className="rounded-2xl pt-0 md:pt-6">
-                <h3 className="text-xl font-semibold text-gray-900">
-                  {dest.keyHighlightsHeading || "Key Highlights"}
-                </h3>
-                <ul className="mt-4 space-y-3">
-                  {dest.highlights.map((h) => (
-                    <li key={h} className="flex items-start gap-3">
-                      <span className="text-blue-600">→</span>
-                      <span className="text-gray-700">{h}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
+ <section className="bg-white">
+  <div className="pi-section">
+    <div className="grid gap-6 md:gap-12 grid-cols-1 lg:grid-cols-3">
+      
+      {/* LEFT (Overview) */}
+      <div className="lg:col-span-2">
+        <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+          {dest.overviewSectionLabel || "Overview"}
+        </p>
+        <h2 className="mt-2 text-3xl font-bold text-gray-900">
+          {dest.overviewHeading}
+        </h2>
+        <p className="mt-4 text-gray-600 leading-relaxed">
+          {dest.overview}
+        </p>
+      </div>
+
+      {/* RIGHT (Highlights) */}
+      <div>
+        <div className="rounded-2xl pt-0 md:pt-6">
+          <h3 className="text-xl font-semibold text-gray-900">
+            {dest.keyHighlightsHeading || "Key Highlights"}
+          </h3>
+          <ul className="mt-4 space-y-3">
+            {dest.highlights.map((h) => (
+              <li key={h} className="flex items-start gap-3">
+                <span className="text-blue-600">→</span>
+                <span className="text-gray-700">{h}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-      </section>
+      </div>
+
+    </div>
+  </div>
+</section>
 
       {/* Fun Fact */}
       <section

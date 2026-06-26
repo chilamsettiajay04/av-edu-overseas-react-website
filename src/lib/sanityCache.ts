@@ -1,6 +1,6 @@
-const TTL = 60 * 60 * 1000;
+const TTL = 30 * 1000;
 
-const STORAGE_PREFIX = "sanity_";
+const STORAGE_PREFIX = "sanity_v2_";
 
 interface CacheEntry {
   data: unknown;

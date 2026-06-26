@@ -295,7 +295,7 @@ export default function ContactPage() {
       <section className="bg-white">
         <div className="pi-section">
           <Reveal>
-            <form onSubmit={onSubmit} className="space-y-1 bg-card p-8 shadow-sm sm:p-10">
+            <form onSubmit={onSubmit} className="space-y-1 bg-card shadow-sm sm:p-10">
               <input name="_hp" type="text" className="sr-only" tabIndex={-1} autoComplete="off" />
               <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
                 <input

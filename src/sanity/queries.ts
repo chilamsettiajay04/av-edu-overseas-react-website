@@ -324,7 +324,12 @@ const siteSettingsQuery = `*[_type == "siteSettings"][0]{
   "missionBgImage": missionBgImage,
   "seoTitle": seoTitle,
   "seoDescription": seoDescription,
-  "seoOgImage": seoOgImage.asset->url
+  "seoOgImage": seoOgImage.asset->url,
+  "announcementPopupEnabled": announcementPopupEnabled,
+  "announcementPopupMessage": announcementPopupMessage,
+  "announcementPopupImage": announcementPopupImage,
+  "announcementPopupCtaText": announcementPopupCtaText,
+  "announcementPopupCtaLink": announcementPopupCtaLink
 }`;
 
 export interface SocialLink {
@@ -369,16 +374,17 @@ export interface SiteSettings {
   seoTitle?: string;
   seoDescription?: string;
   seoOgImage?: string;
+  announcementPopupEnabled?: boolean;
+  announcementPopupMessage?: string;
+  announcementPopupImage?: string;
+  announcementPopupCtaText?: string;
+  announcementPopupCtaLink?: string;
 }
 
 export async function getSiteSettings(): Promise<SiteSettings | null> {
   return cachedClientFetch(siteSettingsQuery);
 }
 
-let _siteSettingsPromise: Promise<SiteSettings | null> | null = null;
 export function getSiteSettingsShared(): Promise<SiteSettings | null> {
-  if (!_siteSettingsPromise) {
-    _siteSettingsPromise = getSiteSettings();
-  }
-  return _siteSettingsPromise;
+  return getSiteSettings();
 }
